@@ -1,6 +1,6 @@
 {
   "name": "@gigerit/inertia-modal-vuetify",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Vuetify-styled drop-in replacement for @inertiaui/modal-vue",
   "type": "module",
   "main": "./dist/inertia-modal-vuetify.cjs.js",
