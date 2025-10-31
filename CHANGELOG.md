@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/gigerIT/inertia-modal-vuetify/compare/v1.1.0...v1.1.1) (2025-10-31)
+
+
+### Bug Fixes
+
+* correctly position close button on the right side ([139d961](https://github.com/gigerIT/inertia-modal-vuetify/commit/139d96135b37763d5e7aa8df3d2d31b92e06808a))
+
 ## [1.1.0](https://github.com/gigerIT/inertia-modal-vuetify/compare/v1.0.0...v1.1.0) (2025-10-31)
 
 
