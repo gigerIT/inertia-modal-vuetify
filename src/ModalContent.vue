@@ -80,23 +80,22 @@ function handleClickOutside(event) {
           :max-width="maxWidthValue"
           :elevation="2"
           rounded
+          position="relative"
           :data-inertiaui-modal-entered="entered"
           @keydown.esc="handleEscapeKey"
         >
+          <template v-if="config.closeButton">
+            <div class="d-flex justify-end pa-2">
+              <CloseButton />
+            </div>
+          </template>
           <div
-            class="im-modal-content relative"
+            class="im-modal-content"
             :class="[
               config.paddingClasses || 'pa-4 pa-sm-6',
               config.panelClasses || '',
             ]"
           >
-            <v-spacer></v-spacer>
-            <template v-if="config.closeButton">
-              <div class="absolute">
-                <CloseButton />
-              </div>
-            </template>
-
             <slot :modal-context="modalContext" :config="config" />
           </div>
         </v-card>
