@@ -1,5 +1,52 @@
 {
+  "name": "@gigerit/inertia-modal-vuetify",
+  "version": "0.1.0",
+  "description": "Vuetify-styled drop-in replacement for @inertiaui/modal-vue",
+  "type": "module",
+  "main": "./dist/inertia-modal-vuetify.cjs.js",
+  "module": "./dist/inertia-modal-vuetify.es.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/inertia-modal-vuetify.es.js",
+      "require": "./dist/inertia-modal-vuetify.cjs.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./src": "./src/index.js"
+  },
+  "scripts": {
+    "dev": "cd example && vite",
+    "build": "vite build",
+    "build:example": "cd example && vite build",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0",
+    "vuetify": "^3.0.0",
+    "@inertiajs/vue3": "^2.2.15"
+  },
   "dependencies": {
     "@inertiaui/modal-vue": "^1.0.0-beta-4"
-  }
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.4",
+    "vite": "^5.4.21",
+    "vite-plugin-vuetify": "^2.1.2",
+    "vue": "^3.5.22",
+    "vuetify": "^3.10.8",
+    "@mdi/font": "^7.4.47"
+  },
+  "keywords": [
+    "inertia",
+    "inertiajs",
+    "modal",
+    "vuetify",
+    "vue"
+  ],
+  "author": "",
+  "license": "MIT"
 }
