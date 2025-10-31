@@ -109,9 +109,11 @@ const dialogZIndex = computed(() => {
         <div
           :data-inertiaui-modal-id="id"
           :data-inertiaui-modal-index="index"
-          class="im-dialog relative"
+          class="im-dialog position-relative w-100"
           :style="{
             zIndex: dialogZIndex,
+            minHeight: '100vh',
+            height: '100vh',
           }"
           :aria-hidden="!onTopOfStack"
         >
@@ -146,13 +148,6 @@ const dialogZIndex = computed(() => {
 </template>
 
 <style scoped>
-.im-dialog {
-  position: relative;
-  min-height: 100vh;
-  height: 100vh;
-  width: 100%;
-}
-
 /* Override v-dialog default styling if needed */
 :deep(.im-dialog-content) {
   pointer-events: auto;

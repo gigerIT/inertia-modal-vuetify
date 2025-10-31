@@ -50,17 +50,16 @@ function handleClickOutside(event) {
 
 <template>
   <div
-    class="im-modal-container d-flex align-center justify-center pa-4"
-    style="position: absolute; inset: 0; overflow-y: auto"
+    class="im-modal-container d-flex align-center justify-center pa-4 position-absolute overflow-y-auto"
+    style="inset: 0"
   >
     <div
-      class="im-modal-positioner d-flex justify-center"
+      class="im-modal-positioner d-flex justify-center min-h-100 w-100"
       :class="{
         'align-start': config.position === 'top',
         'align-center': config.position === 'center',
         'align-end': config.position === 'bottom',
       }"
-      style="min-height: 100%; width: 100%"
     >
       <Transition
         appear
@@ -83,6 +82,7 @@ function handleClickOutside(event) {
           position="relative"
           :data-inertiaui-modal-entered="entered"
           @keydown.esc="handleEscapeKey"
+          style="transition: all 0.3s ease-in-out"
         >
           <template v-if="config.closeButton">
             <div class="d-flex justify-end pa-2">
@@ -105,21 +105,6 @@ function handleClickOutside(event) {
 </template>
 
 <style scoped>
-.im-modal-container {
-  position: absolute;
-  inset: 0;
-  overflow-y: auto;
-}
-
-.im-modal-positioner {
-  min-height: 100%;
-  width: 100%;
-}
-
-.im-modal-wrapper {
-  transition: all 0.3s ease-in-out;
-}
-
 .blur-sm {
   filter: blur(4px);
 }
