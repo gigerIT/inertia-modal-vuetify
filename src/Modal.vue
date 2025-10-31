@@ -148,15 +148,18 @@ const dialogZIndex = computed(() => {
 <style scoped>
 .im-dialog {
   position: relative;
-  height: 100%;
+  min-height: 100vh;
+  height: 100vh;
   width: 100%;
 }
 
 /* Override v-dialog default styling if needed */
 :deep(.im-dialog-content) {
   pointer-events: auto;
-  height: 100%;
-  width: 100%;
+  min-height: 100vh !important;
+  height: 100vh !important;
+  width: 100% !important;
   position: relative;
+  max-height: none !important;
 }
 </style>
