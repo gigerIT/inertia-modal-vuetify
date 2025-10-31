@@ -1,0 +1,45 @@
+{
+    "$schema": "https://json.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "build:ssr": "vite build && vite build --ssr",
+        "dev": "vite",
+        "format": "prettier --write resources/",
+        "format:check": "prettier --check resources/",
+        "lint": "eslint . --fix"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.38.0",
+        "@laravel/vite-plugin-wayfinder": "^0.1.7",
+        "@types/node": "^22.18.13",
+        "@vue/eslint-config-typescript": "^14.6.0",
+        "eslint": "^9.38.0",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-vue": "^9.33.0",
+        "prettier": "^3.6.2",
+        "prettier-plugin-organize-imports": "^4.3.0",
+        "typescript-eslint": "^8.46.2",
+        "vue-tsc": "^2.2.12"
+    },
+    "dependencies": {
+        "@gigerit/inertia-modal-vuetify": "file:..",
+        "@inertiajs/vue3": "^2.2.15",
+        "@vitejs/plugin-vue": "^6.0.1",
+        "@vueuse/core": "^12.8.2",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "concurrently": "^9.2.1",
+        "laravel-vite-plugin": "^2.0.1",
+        "typescript": "^5.9.3",
+        "vite": "^7.1.12",
+        "vite-plugin-vuetify": "^2.1.2",
+        "vue": "^3.5.22",
+        "vuetify": "^3.10.8"
+    },
+    "optionalDependencies": {
+        "@rollup/rollup-linux-x64-gnu": "4.9.5",
+        "lightningcss-linux-x64-gnu": "^1.30.2"
+    }
+}

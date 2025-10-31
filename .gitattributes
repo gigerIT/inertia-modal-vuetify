@@ -3,3 +3,4 @@
 /.gitignore         export-ignore
 /docs               export-ignore
 /example            export-ignore
+/demo-app           export-ignore
