@@ -28,6 +28,8 @@ export default defineConfig({
     resolve: {
         alias: {
             '@gigerit/inertia-modal-vuetify': resolve(__dirname, '../src/index.js'),
+            // Ensure @inertiaui/modal-vue resolves correctly when imported through our package
+            '@inertiaui/modal-vue': resolve(__dirname, 'node_modules/@inertiaui/modal-vue'),
         },
     },
 });
