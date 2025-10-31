@@ -98,10 +98,15 @@ const dialogZIndex = computed(() => {
       :model-value="isOpen"
       @update:model-value="setOpen"
       :persistent="config?.closeExplicitly"
-      :scrim="config?.slideover ? false : onTopOfStack ? true : false"
+      :scrim="onTopOfStack ? true : false"
       :z-index="dialogZIndex"
       :close-on-back="!config?.closeExplicitly"
-      content-class="im-dialog-content"
+      :content-class="
+        config?.slideover
+          ? 'im-dialog-content im-slideover-dialog'
+          : 'im-dialog-content'
+      "
+      :transition="config?.slideover ? false : undefined"
       :fullscreen="false"
       :scrollable="false"
     >
@@ -156,5 +161,16 @@ const dialogZIndex = computed(() => {
   width: 100% !important;
   position: relative;
   max-height: none !important;
+}
+</style>
+
+<style>
+/* Global styles for teleported dialog content */
+/* Override Vuetify's .v-dialog > .v-overlay__content rules for slideovers */
+.v-dialog > .v-overlay__content.im-slideover-dialog {
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
 }
 </style>

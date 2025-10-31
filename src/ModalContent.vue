@@ -84,7 +84,7 @@ function handleClickOutside(event) {
           @keydown.esc="handleEscapeKey"
           style="transition: all 0.3s ease-in-out"
         >
-          <template v-if="config.closeButton">
+          <template v-if="config.closeButton !== false">
             <div class="d-flex justify-end pa-2">
               <CloseButton />
             </div>

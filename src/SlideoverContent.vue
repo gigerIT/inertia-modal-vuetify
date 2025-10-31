@@ -1,5 +1,9 @@
 <script setup>
 import { ref, computed, provide } from "vue";
+import {
+  VSlideXTransition,
+  VSlideXReverseTransition,
+} from "vuetify/components";
 import CloseButton from "./CloseButton.vue";
 import { getMaxWidth } from "./config.js";
 
@@ -35,16 +39,6 @@ const contentClasses = computed(() => {
   return classes.join(" ");
 });
 
-const slideoverPosition = computed(() => {
-  return props.config.position === "left" ? "left" : "right";
-});
-
-const translateClass = computed(() => {
-  return props.config.position === "left"
-    ? "-translate-x-full"
-    : "translate-x-full";
-});
-
 function handleEscapeKey(event) {
   if (props.config?.closeExplicitly) {
     event.preventDefault();
@@ -70,19 +64,18 @@ function handleClickOutside(event) {
         'justify-end': config.position === 'right',
       }"
     >
-      <Transition
+      <component
+        :is="
+          config.position === 'left'
+            ? VSlideXTransition
+            : VSlideXReverseTransition
+        "
         appear
-        enter-active-class="transition-all duration-300 ease-in-out"
-        :enter-from-class="`opacity-0 ${translateClass}`"
-        enter-to-class="opacity-100 translate-x-0"
-        leave-active-class="transition-all duration-300 ease-in-out"
-        leave-from-class="opacity-100 translate-x-0"
-        :leave-to-class="`opacity-0 ${translateClass}`"
         @after-enter="entered = true"
         @after-leave="modalContext.afterLeave"
       >
         <v-card
-          v-show="entered || modalContext.isOpen"
+          v-if="modalContext.isOpen"
           class="im-slideover-wrapper"
           :class="contentClasses"
           :max-width="maxWidthValue"
@@ -93,7 +86,6 @@ function handleClickOutside(event) {
           rounded="0"
           :data-inertiaui-modal-entered="entered"
           @keydown.esc="handleEscapeKey"
-          style="transition: all 0.3s ease-in-out"
         >
           <div
             class="im-slideover-content position-relative h-100"
@@ -103,9 +95,9 @@ function handleClickOutside(event) {
             ]"
           >
             <div
-              v-if="config.closeButton"
+              v-if="config.closeButton !== false"
               class="position-absolute pa-3"
-              style="right: 0; top: 0"
+              style="right: 0; top: 0; z-index: 1"
             >
               <CloseButton />
             </div>
@@ -113,7 +105,7 @@ function handleClickOutside(event) {
             <slot :modal-context="modalContext" :config="config" />
           </div>
         </v-card>
-      </Transition>
+      </component>
     </div>
   </div>
 </template>
@@ -121,17 +113,5 @@ function handleClickOutside(event) {
 <style scoped>
 .blur-sm {
   filter: blur(4px);
-}
-
-.translate-x-full {
-  transform: translateX(100%);
-}
-
-.-translate-x-full {
-  transform: translateX(-100%);
-}
-
-.translate-x-0 {
-  transform: translateX(0);
 }
 </style>
