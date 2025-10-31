@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/gigerIT/inertia-modal-vuetify/compare/v1.1.1...v1.1.2) (2025-10-31)
+
+
+### Bug Fixes
+
+* update modal styles for consistent height and min-height ([08fbcd3](https://github.com/gigerIT/inertia-modal-vuetify/commit/08fbcd3d8f82a0fd0c663589683a856c40cd9164))
+
 ## [1.1.1](https://github.com/gigerIT/inertia-modal-vuetify/compare/v1.1.0...v1.1.1) (2025-10-31)
 
 
