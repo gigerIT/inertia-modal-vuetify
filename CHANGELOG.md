@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/gigerIT/inertia-modal-vuetify/compare/v1.1.2...v1.2.0) (2025-11-12)
+
+
+### Features
+
+* change readme to trigger release for previous commit ([ccb0f25](https://github.com/gigerIT/inertia-modal-vuetify/commit/ccb0f2522def4c6deb8e5e4d8a267212f6bd5e2d))
+
 ## [1.1.2](https://github.com/gigerIT/inertia-modal-vuetify/compare/v1.1.1...v1.1.2) (2025-10-31)
 
 
