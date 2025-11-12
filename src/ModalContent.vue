@@ -49,59 +49,44 @@ function handleClickOutside(event) {
 </script>
 
 <template>
-  <div
-    class="im-modal-container d-flex align-center justify-center pa-4 position-absolute overflow-y-auto"
-    style="inset: 0"
+  <Transition
+    appear
+    enter-active-class="transition-all duration-300 ease-in-out"
+    enter-from-class="opacity-0 translate-y-4 scale-95"
+    enter-to-class="opacity-100 translate-y-0 scale-100"
+    leave-active-class="transition-all duration-300 ease-in-out"
+    leave-from-class="opacity-100 translate-y-0 scale-100"
+    leave-to-class="opacity-0 translate-y-4 scale-95"
+    @after-enter="entered = true"
+    @after-leave="modalContext.afterLeave"
   >
-    <div
-      class="im-modal-positioner d-flex justify-center min-h-100 w-100"
-      :class="{
-        'align-start': config.position === 'top',
-        'align-center': config.position === 'center',
-        'align-end': config.position === 'bottom',
-      }"
+    <v-card
+      v-show="entered || modalContext.isOpen"
+      class="im-modal-wrapper"
+      :class="contentClasses"
+      :max-width="maxWidthValue"
+      :elevation="2"
+      rounded
+      :data-inertiaui-modal-entered="entered"
+      @keydown.esc="handleEscapeKey"
+      style="transition: all 0.3s ease-in-out"
     >
-      <Transition
-        appear
-        enter-active-class="transition-all duration-300 ease-in-out"
-        enter-from-class="opacity-0 translate-y-4 scale-95"
-        enter-to-class="opacity-100 translate-y-0 scale-100"
-        leave-active-class="transition-all duration-300 ease-in-out"
-        leave-from-class="opacity-100 translate-y-0 scale-100"
-        leave-to-class="opacity-0 translate-y-4 scale-95"
-        @after-enter="entered = true"
-        @after-leave="modalContext.afterLeave"
+      <template v-if="config.closeButton !== false">
+        <div class="d-flex justify-end pa-2">
+          <CloseButton />
+        </div>
+      </template>
+      <div
+        class="im-modal-content"
+        :class="[
+          config.paddingClasses || 'pa-4 pa-sm-6',
+          config.panelClasses || '',
+        ]"
       >
-        <v-card
-          v-show="entered || modalContext.isOpen"
-          class="im-modal-wrapper w-100"
-          :class="contentClasses"
-          :max-width="maxWidthValue"
-          :elevation="2"
-          rounded
-          position="relative"
-          :data-inertiaui-modal-entered="entered"
-          @keydown.esc="handleEscapeKey"
-          style="transition: all 0.3s ease-in-out"
-        >
-          <template v-if="config.closeButton !== false">
-            <div class="d-flex justify-end pa-2">
-              <CloseButton />
-            </div>
-          </template>
-          <div
-            class="im-modal-content"
-            :class="[
-              config.paddingClasses || 'pa-4 pa-sm-6',
-              config.panelClasses || '',
-            ]"
-          >
-            <slot :modal-context="modalContext" :config="config" />
-          </div>
-        </v-card>
-      </Transition>
-    </div>
-  </div>
+        <slot :modal-context="modalContext" :config="config" />
+      </div>
+    </v-card>
+  </Transition>
 </template>
 
 <style scoped>
