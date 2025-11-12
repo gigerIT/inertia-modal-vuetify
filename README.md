@@ -427,16 +427,6 @@ Contributions are welcome! Please follow these steps:
 
 This project uses [Conventional Commits](https://www.conventionalcommits.org/) for automated versioning:
 
-- `feat:` - New feature (minor version bump)
-- `fix:` - Bug fix (patch version bump)
-- `feat!:` or `BREAKING CHANGE:` - Breaking change (major version bump)
-- `docs:` - Documentation changes
-- `style:` - Code style changes
-- `refactor:` - Code refactoring
-- `perf:` - Performance improvements
-- `test:` - Adding tests
-- `chore:` - Maintenance tasks
-
 ## License
 
 MIT
