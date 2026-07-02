@@ -5,6 +5,7 @@ export {
     resetConfig,
     initFromPageProps,
     renderApp,
+    withInertiaModal,
     useModal,
     useModalStack,
     visitModal,
@@ -20,4 +21,3 @@ export { default as ModalLink } from './ModalLink.vue'
 
 // Export config helpers
 export { getMaxWidth, getDialogLocation } from './config.js'
-

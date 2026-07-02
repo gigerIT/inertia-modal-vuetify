@@ -31,12 +31,13 @@
   "peerDependencies": {
     "vue": "^3.5.0",
     "vuetify": "^4.0.0",
-    "@inertiajs/vue3": "^2.2.15"
+    "@inertiajs/vue3": "^3.0.0"
   },
   "dependencies": {
-    "@inertiaui/modal-vue": "^1.0.0-beta-5"
+    "@inertiaui/modal-vue": "^3.1.2"
   },
   "devDependencies": {
+    "@inertiajs/vue3": "^3.5.0",
     "@vitejs/plugin-vue": "^5.2.4",
     "vite": "^5.4.21",
     "vite-plugin-vuetify": "^2.1.3",
