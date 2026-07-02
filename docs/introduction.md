@@ -1,10 +1,10 @@
 # Introduction
 
-Inertia Modal is part of [Inertia UI](https://inertiaui.com), a suite of packages designed for Laravel, Inertia.js, and Tailwind CSS. With Inertia Modal, you can easily open any route in a Modal or Slideover without having to change anything about your existing routes or controllers.
+This package is a Vuetify adapter for [InertiaUI Modal](https://inertiaui.com/modal). With it, you can open any route in a Vuetify-styled Modal or Slideover without changing your existing routes or controllers.
 
 Here's a summary of the features:
 
-- Supports React and Vue
+- Supports Vue 3 and Vuetify 4
 - Zero backend configuration
 - Super simple frontend API
 - Support for Base Route / URL
@@ -23,7 +23,7 @@ The package comes with two components: `Modal` and `ModalLink`. `ModalLink` is v
 
 ```vue
 <script setup>
-import { ModalLink } from '@inertiaui/modal-vue'
+import { ModalLink } from '@gigerit/inertia-modal-vuetify'
 </script>
 
 <template>
@@ -35,7 +35,7 @@ The page you linked can then use the `Modal` component to wrap its content in a 
 
 ```vue
 <script setup>
-import { Modal } from '@inertiaui/modal-vue'
+import { Modal } from '@gigerit/inertia-modal-vuetify'
 </script>
 
 <template>

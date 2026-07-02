@@ -16,9 +16,9 @@
   ],
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/inertia-modal-vuetify.es.js",
-      "require": "./dist/inertia-modal-vuetify.cjs.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/inertia-modal-vuetify.cjs.js"
     },
     "./src": "./src/index.js"
   },
@@ -34,6 +34,7 @@
     "@inertiajs/vue3": "^3.0.0"
   },
   "dependencies": {
+    "@inertiaui/vanilla": "^1.0.2",
     "@inertiaui/modal-vue": "^3.1.2"
   },
   "devDependencies": {

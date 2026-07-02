@@ -1,6 +1,6 @@
 # Styling
 
-A fair bit of styling can be adjusted using the [configuration](/configuration) options. However, you may want to customize the modal even further using CSS. The components use Tailwind CSS classes, but all major elements have their own class names, so you can easily target them with your own styles.
+A fair bit of styling can be adjusted using the [configuration](/configuration) options and Vuetify theme utilities. However, you may want to customize the modal even further using CSS. The adapter keeps public `im-` class hooks on the major elements so you can target them with your own styles.
 
 ## Available Classes
 
@@ -8,14 +8,10 @@ You're probably the fastest if you just inspect the modal in your browser and se
 
 | Class | Description |
 | --- | --- |
-| `im-dialog` | The [Headless UI dialog](https://headlessui.com/v1/vue/dialog) component |
 | `im-close-button` | The close button |
-| `im-backdrop` | The backdrop behind the modal |
-| `im-modal-container` | The screen-filling container for the modal |
-| `im-modal-positioner` | The container that positions the modal vertically |
-| `im-modal-wrapper` | The container that sets the maximum width of the modal |
+| `im-modal-wrapper` | The Vuetify card wrapper for centered modals |
 | `im-modal-content` | The actual modal content |
-| `im-slideover-container` | The screen-filling container for the slideover |
-| `im-slideover-positioner` | The container that positions the slideover vertically |
-| `im-slideover-wrapper` | The container that sets the maximum width of the slideover |
+| `im-slideover-dialog` | The teleported Vuetify dialog content wrapper for slideovers |
+| `im-slideover-left` | Added to left-positioned slideovers |
+| `im-slideover-wrapper` | The Vuetify card wrapper for slideovers |
 | `im-slideover-content` | The actual slideover content |

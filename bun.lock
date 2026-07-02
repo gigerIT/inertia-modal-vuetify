@@ -5,6 +5,7 @@
     "": {
       "dependencies": {
         "@inertiaui/modal-vue": "^3.1.2",
+        "@inertiaui/vanilla": "^1.0.2",
       },
       "devDependencies": {
         "@inertiajs/vue3": "^3.5.0",

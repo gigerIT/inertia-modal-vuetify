@@ -24,7 +24,7 @@ In your modal template, you may use the `WhenVisible` component to load a prop o
 ```vue [Vue]
 <script setup>
 import { WhenVisible } from '@inertiajs/vue3' // [!code --]
-import { WhenVisible, Modal } from '@inertiaui/modal-vue'
+import { WhenVisible, Modal } from '@gigerit/inertia-modal-vuetify'
 import { ref } from 'vue'
 
 defineProps({

@@ -58,9 +58,21 @@ export default function UserIndex() {
 
 :::
 
+### `close-on-click-outside`
+
+The `close-on-click-outside` prop controls whether clicking the backdrop closes the modal. By default, backdrop clicks close the modal. Set it to `false` when the `Esc` key and browser back button should still close the modal, but backdrop clicks should not.
+
+```vue
+<template>
+    <ModalLink href="/users/create" :close-on-click-outside="false">
+        Create User
+    </ModalLink>
+</template>
+```
+
 ### `max-width`
 
-The `max-width` lets you specify the maximum width of the modal. For modals, the default value is `2xl`, and for slideover, the default value is `md`. These values correspond to Tailwind CSS conventions. Valid values are `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, and `7xl`.
+The `max-width` lets you specify the maximum width of the modal. For modals, the default value is `2xl`, and for slideover, the default value is `md`. These values keep upstream token compatibility and are mapped to Vuetify pixel widths. Valid values are `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, and `7xl`.
 
 ::: code-group
 
@@ -86,13 +98,13 @@ export default function UserIndex() {
 
 ### `padding-classes`
 
-The `padding-classes` prop allows you to add custom padding classes to the modal. This is useful if you want to add extra padding to the modal content or if you want to remove the default padding. The default classes are `p-4 sm:p-6`.
+The `padding-classes` prop allows you to add custom padding classes to the modal. This is useful if you want to add extra padding to the modal content or if you want to remove the default padding. The default classes are `pa-4 pa-sm-6`.
 
 ::: code-group
 
 ```vue [Vue]
 <template>
-    <ModalLink href="/users/create" padding-classes="p-8">
+    <ModalLink href="/users/create" padding-classes="pa-8">
         Create User
     </ModalLink>
 </template>
@@ -112,7 +124,7 @@ export default function UserIndex() {
 
 ### `panel-classes`
 
-The `panel-classes` prop allows you to add custom classes to the panel of the modal. This is useful if you want to add extra styles to the modal panel, such as a border or shadow. The default classes are `bg-white rounded` for modals and `bg-white min-h-screen` for slideover.
+The `panel-classes` prop allows you to add custom classes to the panel of the modal. This is useful if you want to add extra styles to the modal panel, such as a border or shadow. The default panel class is empty because Vuetify `v-card` provides the base panel styling.
 
 These classes are merged with the padding classes. They are separated by a different prop to allow for more flexibility.
 
@@ -120,7 +132,7 @@ These classes are merged with the padding classes. They are separated by a diffe
 
 ```vue [Vue]
 <template>
-    <ModalLink href="/users/create" panel-classes="bg-blue-50 rounded-lg">
+    <ModalLink href="/users/create" panel-classes="bg-blue-grey-lighten-5">
         Create User
     </ModalLink>
 </template>
@@ -197,7 +209,7 @@ You can set the default configuration for all modals and slideovers by importing
 ::: code-group
 
 ```js [Vue]
-import { putConfig } from '@inertiaui/modal-vue'
+import { putConfig } from '@gigerit/inertia-modal-vuetify'
 ```
 
 ```js [React]
@@ -215,17 +227,19 @@ putConfig({
     modal: {
         closeButton: true,
         closeExplicitly: false,
+        closeOnClickOutside: true,
         maxWidth: '2xl',
-        paddingClasses: 'p-4 sm:p-6',
-        panelClasses: 'bg-white rounded',
+        paddingClasses: 'pa-4 pa-sm-6',
+        panelClasses: '',
         position: 'center',
     },
     slideover: {
         closeButton: true,
         closeExplicitly: false,
+        closeOnClickOutside: true,
         maxWidth: 'md',
-        paddingClasses: 'p-4 sm:p-6',
-        panelClasses: 'bg-white min-h-screen',
+        paddingClasses: 'pa-4 pa-sm-6',
+        panelClasses: '',
         position: 'right',
     },
 })

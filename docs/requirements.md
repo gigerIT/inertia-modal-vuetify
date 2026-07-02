@@ -2,9 +2,10 @@
 
 Inertia Modal has the following requirements:
 
-- Tailwind CSS 3.4+
-- React 18+ or Vue 3.4+
+- Vue 3.5+
+- Vuetify 4+
+- `@inertiajs/vue3` 3+
 
-The package is designed and tested to work with Laravel and Inertia.js v1/v2. It may work with other backend frameworks and Inertia.js versions, but there is no guarantee or support for such configurations.
+The package is designed and tested to work with Laravel and Inertia.js 3. It may work with other backend frameworks and Inertia.js versions, but this adapter's peer dependencies target the Vue 3 / Inertia 3 / Vuetify 4 stack.
 
-The Base Route / URL feature is supported in both Laravel 10 and 11.
+The Base Route / URL feature is provided by the Laravel `inertiaui/modal` backend package.

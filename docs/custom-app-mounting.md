@@ -72,7 +72,7 @@ createInertiaApp({
 In Vue, it is a little bit simpler because you only need to make changes to the main `app.js` file. In this file, you need to call the `initFromPageProps` method with the `props` object. Then, you need to wrap the `App` component within the `ModalRoot` component:
 
 ```js [Vue]
-import { ModalRoot, initFromPageProps } from '@inertiaui/modal-vue' // [!code ++]
+import { ModalRoot, initFromPageProps } from '@gigerit/inertia-modal-vuetify' // [!code ++]
 
 createInertiaApp({
     setup({ el, App, props, plugin }) {

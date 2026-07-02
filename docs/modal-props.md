@@ -51,7 +51,7 @@ If you're using child components within your modal, you can pass props to them, 
 
 ```vue [Vue]
 <script setup>
-import { useModal } from '@inertiaui/modal-vue'
+import { useModal } from '@gigerit/inertia-modal-vuetify'
 
 const { props } = useModal()
 </script>

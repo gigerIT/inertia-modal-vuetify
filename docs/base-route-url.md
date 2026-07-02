@@ -66,7 +66,7 @@ Instead of adding the `navigate` attribute to each `ModalLink` component, you ca
 ::: code-group
 
 ```js [Vue]
-import { putConfig } from '@inertiaui/modal-vue'
+import { putConfig } from '@gigerit/inertia-modal-vuetify'
 putConfig('navigate', true)
 ```
 

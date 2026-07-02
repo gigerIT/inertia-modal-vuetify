@@ -9,8 +9,7 @@ defineOptions({
 </script>
 
 <template>
-    <OriginalModalLink v-bind="$attrs">
-        <slot />
+    <OriginalModalLink v-bind="$attrs" v-slot="slotProps">
+        <slot v-bind="slotProps" />
     </OriginalModalLink>
 </template>
-

@@ -25,14 +25,15 @@ pnpm add @gigerit/inertia-modal-vuetify
 bun add @gigerit/inertia-modal-vuetify
 ```
 
-### Peer Dependencies
+### Requirements
 
-This package requires the following peer dependencies:
+This package requires these peer dependencies:
 
 - `vue` ^3.5.0
 - `vuetify` ^4.0.0
-- `@inertiajs/vue3` ^2.0.0
-- `@inertiaui/modal-vue` (automatically installed as a dependency)
+- `@inertiajs/vue3` ^3.0.0
+
+It also installs `@inertiaui/modal-vue` automatically as a runtime dependency.
 
 Make sure you have Vuetify installed and configured in your project:
 
@@ -197,6 +198,7 @@ Both `Modal` and `ModalLink` components accept the following props:
 | ------------------ | -------------- | ---------------- | -------------------------------------------------------------------------------- |
 | `close-button`     | Boolean        | `true`           | Show/hide the close button                                                       |
 | `close-explicitly` | Boolean        | `false`          | Only close via button or programmatically                                        |
+| `close-on-click-outside` | Boolean  | `true`           | Allow closing by clicking the dialog backdrop                                    |
 | `max-width`        | String         | `'2xl'`          | Maximum width (`sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`) |
 | `padding-classes`  | String/Boolean | `'pa-4 pa-sm-6'` | Vuetify padding classes                                                          |
 | `panel-classes`    | String/Boolean | `''`             | Additional classes for the panel                                                 |
@@ -214,6 +216,7 @@ putConfig({
   modal: {
     closeButton: true,
     closeExplicitly: false,
+    closeOnClickOutside: true,
     maxWidth: "2xl",
     paddingClasses: "pa-4 pa-sm-6",
     panelClasses: "",
@@ -222,6 +225,7 @@ putConfig({
   slideover: {
     closeButton: true,
     closeExplicitly: false,
+    closeOnClickOutside: true,
     maxWidth: "md",
     paddingClasses: "pa-4 pa-sm-6",
     panelClasses: "",
@@ -271,6 +275,8 @@ A link component that opens routes in a modal.
 - `method` (String) - HTTP method (default: `'get'`)
 - `data` (Object) - Data to send with request
 - `headers` (Object) - Additional headers
+- `prefetch` (Boolean/String/Array) - Prefetch the modal visit on hover, click, or mount
+- `cacheFor` (Number) - Prefetch cache lifetime in milliseconds
 - All modal configuration props
 
 **Events:**

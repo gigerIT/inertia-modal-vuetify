@@ -7,7 +7,7 @@ To use the components, you need to import them into your page:
 
 ```vue [Vue]
 <script setup>
-import { Modal, ModalLink } from '@inertiaui/modal-vue'
+import { Modal, ModalLink } from '@gigerit/inertia-modal-vuetify'
 </script>
 ```
 
@@ -20,7 +20,7 @@ import { Modal, ModalLink } from '@inertiaui/modal-react'
 Instead of importing the components on every page, you may also consider importing them globally in your `app.js` file:
 
 ```js{7-8}
-import { Modal, ModalLink, renderApp } from '@inertiaui/modal-vue'
+import { Modal, ModalLink, renderApp } from '@gigerit/inertia-modal-vuetify'
 
 createInertiaApp({
     setup({ el, App, props, plugin }) {
@@ -319,7 +319,7 @@ Instead of using the `ModalLink` component, you can also open a modal programmat
 
 ```vue [Vue]
 <script setup>
-import { visitModal } from '@inertiaui/modal-vue'
+import { visitModal } from '@gigerit/inertia-modal-vuetify'
 
 function createUserModal() {
     visitModal('/users/create')

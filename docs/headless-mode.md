@@ -28,7 +28,7 @@ Here is an example of how to use the `HeadlessModal` component:
 
 ```vue [Vue]
 <script setup>
-import { HeadlessModal } from '@inertiaui/modal-vue'
+import { HeadlessModal } from '@gigerit/inertia-modal-vuetify'
 import { ref } from 'vue'
 
 const modal = ref(null)

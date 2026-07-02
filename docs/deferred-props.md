@@ -24,7 +24,7 @@ In your modal template, you can use the `Deferred` component to render the defer
 ```vue [Vue]
 <script setup>
 import { Deferred } from '@inertiajs/vue3' // [!code --]
-import { Deferred, Modal } from '@inertiaui/modal-vue'
+import { Deferred, Modal } from '@gigerit/inertia-modal-vuetify'
 
 defineProps({
     invoice: Object,

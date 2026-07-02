@@ -1,13 +1,14 @@
 <script setup>
-import { HeadlessModal } from "@inertiaui/modal-vue";
+import { lockScroll, markAriaHidden } from "@inertiaui/vanilla";
+import { HeadlessModal, getConfig } from "@inertiaui/modal-vue";
 import ModalContent from "./ModalContent.vue";
 import SlideoverContent from "./SlideoverContent.vue";
-import { onBeforeMount, onUnmounted, ref, computed } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 const modal = ref(null);
-const rendered = ref(false);
+const lastCloseTrigger = ref(null);
 
-defineEmits(["after-leave", "blur", "close", "focus", "success"]);
+const emits = defineEmits(["after-leave", "blur", "close", "focus", "success"]);
 
 defineExpose({
   afterLeave: () => modal.value?.afterLeave(),
@@ -41,10 +42,71 @@ defineExpose({
   },
 });
 
-const dialogZIndex = computed(() => {
-  // Vuetify's default dialog z-index is 2400, increase for stacked modals
-  return 2400 + (modal.value?.index || 0) * 10;
+let cleanupScrollLock = null;
+let cleanupAriaHidden = null;
+
+function setupModalEffects() {
+  if (cleanupScrollLock) {
+    return;
+  }
+
+  cleanupScrollLock = lockScroll();
+
+  const appElement = getConfig("appElement");
+  if (appElement) {
+    cleanupAriaHidden = markAriaHidden(appElement);
+  }
+}
+
+function cleanupModalEffects() {
+  cleanupScrollLock?.();
+  cleanupAriaHidden?.();
+  cleanupScrollLock = null;
+  cleanupAriaHidden = null;
+}
+
+onMounted(() => {
+  if (modal.value?.isOpen) {
+    setupModalEffects();
+  }
 });
+
+onUnmounted(() => {
+  cleanupModalEffects();
+});
+
+function onSuccessEvent() {
+  emits("success");
+  setupModalEffects();
+}
+
+function onCloseEvent() {
+  emits("close");
+  cleanupModalEffects();
+}
+
+function handleClickOutside() {
+  lastCloseTrigger.value = "outside";
+  queueMicrotask(() => {
+    if (lastCloseTrigger.value === "outside") {
+      lastCloseTrigger.value = null;
+    }
+  });
+}
+
+function handleModelValueUpdate(value, setOpen, config) {
+  if (
+    value === false &&
+    lastCloseTrigger.value === "outside" &&
+    config?.closeOnClickOutside === false
+  ) {
+    lastCloseTrigger.value = null;
+    return;
+  }
+
+  lastCloseTrigger.value = null;
+  setOpen(value);
+}
 </script>
 
 <template>
@@ -65,15 +127,17 @@ const dialogZIndex = computed(() => {
       reload,
       setOpen,
       shouldRender,
+      ...props
     }"
-    @success="$emit('success')"
-    @close="$emit('close')"
-    @focus="$emit('focus')"
-    @blur="$emit('blur')"
+    @success="onSuccessEvent"
+    @close="onCloseEvent"
+    @focus="emits('focus')"
+    @blur="emits('blur')"
   >
     <v-dialog
       :model-value="isOpen"
-      @update:model-value="setOpen"
+      @update:model-value="handleModelValueUpdate($event, setOpen, config)"
+      @click:outside="handleClickOutside"
       :data-inertiaui-modal-id="id"
       :data-inertiaui-modal-index="index"
       :aria-hidden="!onTopOfStack"
@@ -100,6 +164,7 @@ const dialogZIndex = computed(() => {
           @after-leave="$emit('after-leave')"
         >
           <slot
+            v-bind="props"
             :id="id"
             :after-leave="afterLeave"
             :close="close"
