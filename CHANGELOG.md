@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/gigerIT/inertia-modal-vuetify/compare/v1.2.0...v2.0.0) (2026-07-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* vuetify peer dependency now requires ^4.0.0 and vue requires ^3.5.0.
+
+### Features
+
+* support Vuetify 4 ([7ac209a](https://github.com/gigerIT/inertia-modal-vuetify/commit/7ac209ae873c6037ace74138175644f2d620d8c4))
+
 ## [1.2.0](https://github.com/gigerIT/inertia-modal-vuetify/compare/v1.1.2...v1.2.0) (2025-11-12)
 
 
