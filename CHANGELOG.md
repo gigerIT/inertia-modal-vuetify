@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.1.0](https://github.com/gigerIT/inertia-modal-vuetify/compare/v2.0.0...v2.1.0) (2026-07-02)
+
+
+### Features
+
+* add modal accessibility lifecycle ([9ce1993](https://github.com/gigerIT/inertia-modal-vuetify/commit/9ce19932e02113cd307ddd499b77d4b826d5b570))
+* add package type declarations ([2fa398a](https://github.com/gigerIT/inertia-modal-vuetify/commit/2fa398a5baca447bef7e96936d560b523b0c74d2))
+* expose upstream modal v3 helpers ([ee6768a](https://github.com/gigerIT/inertia-modal-vuetify/commit/ee6768af2dc36c11de987e1d6dead855ff37d82c))
+* support outside click close config ([c6b92fa](https://github.com/gigerIT/inertia-modal-vuetify/commit/c6b92fa73e1dd42271905a7fd48e56ab31fa73aa))
+
 ## [2.0.0](https://github.com/gigerIT/inertia-modal-vuetify/compare/v1.2.0...v2.0.0) (2026-07-02)
 
 
