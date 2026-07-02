@@ -77,7 +77,6 @@ jobs:
           name: Release ${{ needs.release-please.outputs.tag_name }}
           files: dist/*
           generate_release_notes: true
-          overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -123,6 +122,5 @@ jobs:
           name: Release ${{ inputs.tag_name }}
           files: dist/*
           generate_release_notes: true
-          overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
