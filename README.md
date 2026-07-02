@@ -5,7 +5,7 @@ A Vuetify-styled drop-in replacement for [@inertiaui/modal-vue](https://github.c
 ## Features
 
 - ✅ **Drop-in replacement** - Same API as `@inertiaui/modal-vue`
-- ✅ **Vuetify 3 styling** - Uses `v-dialog`, `v-card`, and other Vuetify components
+- ✅ **Vuetify 4 styling** - Uses `v-dialog`, `v-card`, and other Vuetify components
 - ✅ **Zero backend configuration** - Works with existing Inertia.js routes
 - ✅ **Modal and slideover support** - Both dialog and drawer-style modals
 - ✅ **Nested/stacked modals** - Support for multiple modals
@@ -29,8 +29,8 @@ bun add @gigerit/inertia-modal-vuetify
 
 This package requires the following peer dependencies:
 
-- `vue` ^3.0.0
-- `vuetify` ^3.0.0
+- `vue` ^3.5.0
+- `vuetify` ^4.0.0
 - `@inertiajs/vue3` ^2.0.0
 - `@inertiaui/modal-vue` (automatically installed as a dependency)
 
@@ -384,7 +384,7 @@ All functionality, API, and behavior remain the same.
 
 ## Browser Support
 
-Supports all browsers that Vuetify 3 supports. See [Vuetify Browser Support](https://vuetifyjs.com/en/getting-started/browser-support/).
+Supports all browsers that Vuetify 4 supports. See [Vuetify Browser Support](https://vuetifyjs.com/en/getting-started/browser-support/).
 
 ## Building
 
