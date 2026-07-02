@@ -23,7 +23,7 @@
     "./src": "./src/index.js"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite serve example",
     "build": "vite build",
     "build:example": "cd example && vite build",
     "prepublishOnly": "npm run build"
