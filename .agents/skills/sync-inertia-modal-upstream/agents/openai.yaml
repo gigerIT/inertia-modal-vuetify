@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sync Inertia Modal Upstream"
+  short_description: "Upgrade InertiaUI Modal adapter compatibility"
+  default_prompt: "Use $sync-inertia-modal-upstream to update this adapter from the latest upstream InertiaUI Modal changes."
