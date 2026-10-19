@@ -8,19 +8,20 @@
         "dev": "vite",
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",
-        "lint": "eslint . --fix"
+        "lint": "eslint . --fix",
+        "lint:test": "node --test tests/frontend/eslint-config.test.mjs"
     },
     "devDependencies": {
         "@eslint/js": "^9.38.0",
         "@laravel/vite-plugin-wayfinder": "^0.1.7",
         "@types/node": "^22.18.13",
-        "@vue/eslint-config-typescript": "^14.6.0",
         "eslint": "^9.38.0",
         "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-vue": "^9.33.0",
+        "eslint-plugin-vue": "^10.11.1",
         "prettier": "^3.6.2",
         "prettier-plugin-organize-imports": "^4.3.0",
-        "typescript-eslint": "^8.46.2",
+        "typescript-eslint": "^8.71.2",
+        "vue-eslint-parser": "^10.4.1",
         "vue-tsc": "^2.2.12"
     },
     "dependencies": {
@@ -31,17 +32,16 @@
         "@vueuse/core": "^12.8.2",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
-        "concurrently": "^9.2.1",
+        "concurrently": "^9.2.5",
         "install": "^0.13.0",
         "laravel-vite-plugin": "^2.0.1",
         "typescript": "^5.9.3",
-        "vite": "^7.1.12",
+        "vite": "^7.3.5",
         "vite-plugin-vuetify": "^2.1.3",
-        "vue": "^3.5.22",
+        "vue": "^3.5.42",
         "vuetify": "^4.1.2"
     },
     "optionalDependencies": {
-        "@rollup/rollup-linux-x64-gnu": "4.9.5",
         "lightningcss-linux-x64-gnu": "^1.30.2"
     }
 }

@@ -66,6 +66,7 @@ export default defineConfig({
             entry: resolve(__dirname, 'src/index.js'),
             name: 'InertiaModalVuetify',
             fileName: (format) => `inertia-modal-vuetify.${format}.js`,
+            cssFileName: 'style',
             formats: ['es', 'cjs'],
         },
         rollupOptions: {
