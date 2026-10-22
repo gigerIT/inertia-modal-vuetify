@@ -6,7 +6,7 @@ and `references/adapter-mirror-map.md` for file-level follow-up.
 ## Commit And Release Discovery
 
 ```sh
-git ls-remote https://github.com/inertiaui/modal.git HEAD refs/heads/main
+git ls-remote --symref https://github.com/inertiaui/modal.git HEAD
 npm view @inertiaui/modal-vue version dist-tags repository --json
 ```
 
@@ -84,11 +84,13 @@ and package exports to find equivalent files.
 Run smallest relevant commands first, then expand for release-facing changes:
 
 ```sh
+bun run test
 bun run build
 bun run build:example
 cd demo-app && npm run build
 cd demo-app && npm run build:ssr
 cd demo-app && npm run format:check
+cd demo-app && npm run typecheck
 cd demo-app && composer run test
 bun list --all | rg '@inertiaui/modal-vue|@inertiajs/vue3|vue@|vuetify'
 npm pack --dry-run --json
@@ -112,9 +114,10 @@ When UI/lifecycle behavior changed, manually smoke:
 
 ## Package Artifact Checks
 
-- `dist/inertia-modal-vuetify.es.js` and CJS output build without bundling
+- `dist/inertia-modal-vuetify.js` (ESM only, no CSS) builds without bundling
   duplicate Vue, Vuetify, Inertia, or upstream modal runtimes.
-- `dist/index.d.ts` remains accurate when public exports changed.
+- `src/index.d.ts` remains accurate when public exports changed; the demo
+  `npm run typecheck` exercises it.
 - `npm pack --dry-run --json` includes expected publish files only.
 - Example and demo still resolve the local adapter source for development.
 

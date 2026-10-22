@@ -31,9 +31,10 @@ the presentation layer to Vuetify.
   constraints/lockfiles and porting only needed Vuetify presentation changes.
 - `src/index.js` re-exports upstream helpers and exports adapter components.
 - `src/Modal.vue` wraps upstream `HeadlessModal` with Vuetify `v-dialog`.
-- `src/ModalContent.vue`, `src/SlideoverContent.vue`, and `src/CloseButton.vue`
-  replace upstream Tailwind/Reka presentation with Vuetify components.
-- `ModalLink.vue` forwards to upstream `ModalLink`; preserve attribute/slot pass-through.
+- `src/ModalContent.vue` (modal and slideover) and `src/CloseButton.vue`
+  replace upstream Tailwind presentation with Vuetify components.
+- `ModalLink` is re-exported from upstream unchanged.
+- `src/index.d.ts` declares the public types; keep it in sync with exports.
 
 ## Workflow
 
@@ -57,16 +58,16 @@ Preserve unrelated dirty files.
 ### 2. Resolve upstream target
 
 - Default repo: `https://github.com/inertiaui/modal.git`
-- Default branch: `main`
+- Default branch: upstream `HEAD` (currently `3.x`; there is no `main`)
 - Default package: `@inertiaui/modal-vue`
 - If the user supplied a version, tag, branch, or commit, use that exact target.
 - Otherwise compare installed package/lockfile version to latest npm package and
-  upstream `main`.
+  upstream `HEAD`.
 
 Inspect delta before editing:
 
 ```sh
-git ls-remote https://github.com/inertiaui/modal.git HEAD refs/heads/main
+git ls-remote --symref https://github.com/inertiaui/modal.git HEAD
 npm view @inertiaui/modal-vue version dist-tags repository --json
 ```
 

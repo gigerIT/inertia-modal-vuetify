@@ -12,8 +12,8 @@ Tracked sync paths usually include:
 
 - `package.json`
 - `bun.lock`
-- `dist/**`
-- `src/**`
+- `src/**` (including `src/index.d.ts`)
+- `tests/**`
 - `docs/**`
 - `example/**`
 - `demo-app/package.json`
@@ -26,7 +26,7 @@ Do not edit `node_modules/**`, `demo-app/vendor/**`, or cache/storage artifacts.
 ## Resolve Target Version
 
 ```sh
-git ls-remote https://github.com/inertiaui/modal.git HEAD refs/heads/main
+git ls-remote --symref https://github.com/inertiaui/modal.git HEAD
 npm view @inertiaui/modal-vue version dist-tags repository --json
 ```
 
@@ -91,8 +91,10 @@ Check `example/vite.config.js` if local aliasing or dependency resolution change
 
 ## Refresh Demo App
 
-The Laravel demo consumes this adapter through `file:..` and aliases the package
-name to `../src/index.js` for local source testing.
+The Laravel demo does not install this adapter; it aliases the package name to
+`../src/index.js` for local source testing. It therefore lists the adapter's
+runtime dependencies (`@inertiaui/modal-vue`, `@inertiaui/vanilla`) itself, so
+bump them there together with the root `package.json`.
 
 ```sh
 cd demo-app
@@ -106,10 +108,12 @@ cd demo-app
 composer update inertiaui/modal --with-all-dependencies
 ```
 
-Preserve the demo Vite alias unless intentionally testing the built package:
+Preserve the demo resolution setup unless intentionally testing the built package:
 
-- `@gigerit/inertia-modal-vuetify` -> `../src/index.js`
-- `@inertiaui/modal-vue` -> demo `node_modules/@inertiaui/modal-vue`
+- Vite alias `@gigerit/inertia-modal-vuetify` -> `../src/index.js`
+- Vite `resolve.dedupe` for Vue, Vuetify, Inertia, and `@inertiaui/*`, so the
+  aliased source does not load the root install's copies
+- `tsconfig.json` `paths` `@gigerit/inertia-modal-vuetify` -> `../src/index.d.ts`
 
 ## Regenerate Adapter Build Output
 
@@ -117,8 +121,7 @@ Preserve the demo Vite alias unless intentionally testing the built package:
 bun run build
 ```
 
-Generated `dist/**` is gitignored except `dist/index.d.ts` in this checkout.
-Only include generated outputs when the task or release workflow expects them.
+Generated `dist/**` is gitignored; types are hand-written in `src/index.d.ts`.
 
 ## Commit Scope Expectations
 
@@ -128,7 +131,7 @@ Typical sync work includes some or all of:
 - adapter fixes in `src/`
 - docs/example/demo updates
 - demo lockfiles
-- `dist/index.d.ts` when public types changed
+- `src/index.d.ts` when public types changed
 - repo-root `UPSTREAM.md` after verification passes
 
 Do not commit unrelated dirty files. Preserve pre-existing local changes outside

@@ -17,14 +17,11 @@ _This file contains critical rules and patterns that AI agents must follow when 
 
 ## Technology Stack & Versions
 
-- Package: `@gigerit/inertia-modal-vuetify` 1.2.0, ESM package with ESM and CommonJS library builds
-- Vue `^3.5.24`; package peer compatibility remains `^3.0.0`
-- Vuetify `^3.10.10`; package peer compatibility remains `^3.0.0`
-- `@inertiajs/vue3` peer `^2.2.15`
-- `@inertiaui/modal-vue` dependency `^1.0.0-beta-4`
-- Vite `^5.4.21`, `@vitejs/plugin-vue` `^5.2.4`, `vite-plugin-vuetify` `^2.1.2`
-- Material Design Icons via `@mdi/font` `^7.4.47`
-- Demo app: Laravel `^12.0`, PHP `^8.2`, Inertia Laravel `^2.0`, Pest `^4.1`, TypeScript `^5.9.3`, Vite `^7.1.12`
+- Package: `@gigerit/inertia-modal-vuetify` 2.x, ESM-only library build, hand-written types in `src/index.d.ts`
+- Peers: Vue `^3.5.0`, Vuetify `^4.2.0` (dialog `location`), `@inertiajs/vue3` `^3.0.0`
+- Dependencies: `@inertiaui/modal-vue` `^3.1.2`, `@inertiaui/vanilla` `^1.5.0`
+- Tooling: Vite 8, `@vitejs/plugin-vue` 6, Vitest 5 with happy-dom and `@vue/test-utils`
+- Demo app: Laravel 13, PHP `^8.3`, Inertia Laravel 3, `inertiaui/modal` 3, Pest 5, TypeScript 6, Vite 8
 
 ## Critical Implementation Rules
 
@@ -41,17 +38,17 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - `@inertiaui/modal-vue` owns modal state, navigation, stack, and lifecycle. Keep Vuetify components as presentation adapters; do not reimplement upstream modal behavior locally.
 - Preserve `HeadlessModal` contract one-for-one: forwarded events, slot props, and exposed methods/getters are public compatibility surface.
 - Call `modalContext.afterLeave` from the actual Vuetify/Vue leave transition. Premature or duplicate calls can break stack cleanup.
-- `closeExplicitly` must block backdrop, Escape, and browser-back closure consistently through Vuetify `persistent` and `close-on-back` behavior.
+- `closeExplicitly` maps to Vuetify `persistent` (backdrop and Escape). Browser back belongs to Inertia/upstream `ModalRoot`; Vuetify `close-on-back` needs vue-router and stays `false`.
 - Preserve stacked-modal semantics: only top modal gets scrim; covered modals expose `aria-hidden`; modal context drives focus/blur and blur styling.
-- Continue providing `modalContext` as a computed injection for nested controls such as `CloseButton`; injected refs may require `toValue`.
-- Keep teleported `v-dialog` layout overrides global. Component-local visual rules may remain scoped.
+- Continue providing `modalContext` as a ref from `ModalContent.vue`; slot content of local modals (including `CloseButton`) reaches the modal only through it via `useModal()`.
+- The package ships no CSS (library builds do not inject it). Express layout through `v-dialog` props, `content-props` styles, and Vuetify utilities.
 - Use Vuetify components/utilities for package styling. Tailwind-like `maxWidth` tokens are API compatibility values and must pass through `getMaxWidth`.
 - Demo app must mount with `renderApp(App, props)`, then install both Inertia and Vuetify plugins.
 
 ### Testing Rules
 
-- No package-level JavaScript test runner currently exists. Demo Pest tests are starter placeholders and do not validate modal behavior.
-- At minimum, run the package library build after source or export changes. Run the demo build after integration-facing changes.
+- `bun run test` runs the Vitest suite in `tests/`; it mounts real Vuetify dialogs and drives local modals through the upstream stack. Demo Pest tests cover demo routes only.
+- At minimum, run `bun run test` and the library build after source or export changes. Run the demo build and `npm run typecheck` after integration-facing or type changes.
 - Manually verify modal and slideover opening/closing, backdrop and Escape behavior, `closeExplicitly`, left/right slideovers, transition cleanup, and nested stacks for UI/lifecycle changes.
 - Test both public import paths affected by packaging changes: package root built output and demo alias to `src/index.js`.
 - Add focused automated coverage when changing pure helpers or introducing test infrastructure; do not claim existing coverage from placeholder tests.
@@ -71,8 +68,8 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Treat the worktree as shared. Never alter, stage, commit, reformat, move, or delete unrelated changes.
 - Use Conventional Commits (`feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`); release-please derives versions and changelog sections from them.
 - Let release-please own release versioning/changelog updates unless performing an explicit release task.
-- Release CI uses Node 20, Bun with frozen lockfile, `bun run build`, then public npm publish. Keep `bun.lock` synchronized with dependency changes.
-- Build output is `dist/inertia-modal-vuetify.es.js` and `dist/inertia-modal-vuetify.cjs.js`; Vue, Vuetify, Inertia, and upstream modal packages remain external.
+- CI (`.github/workflows/ci.yml`) and release use Bun with frozen lockfiles; release runs tests and the build before npm trusted publishing. Keep `bun.lock` and `demo-app/package-lock.json` synchronized with dependency changes.
+- Build output is `dist/inertia-modal-vuetify.js` (ESM); Vue, Vuetify, Inertia, and upstream modal packages remain external.
 
 ### Critical Don't-Miss Rules
 
@@ -83,7 +80,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Preserve package externalization. Bundling Vue, Vuetify, Inertia, or `@inertiaui/modal-vue` can create duplicate runtimes and broken injection/state.
 - `false` is meaningful for configurable classes and close-button behavior. Do not replace nullish/boolean semantics with truthy defaults without checking API compatibility.
 - Width tokens outside the supported map intentionally fall back to `2xl`; changing token sizes or fallback is consumer-visible.
-- The manifest declares `dist/index.d.ts`, but current Vite config does not generate declarations. Verify type artifact generation before changing or relying on the package typing contract.
+- Upstream config defaults are Tailwind classes; `src/config.js` wraps `putConfig`/`resetConfig` so Vuetify class defaults apply. Never bypass it.
 - Root dependencies may be absent in a fresh checkout. Install with Bun from `bun.lock` before treating build failures as source defects.
 
 ---
@@ -102,4 +99,4 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Update it when stack, public API, architecture, or workflow changes.
 - Review periodically and remove stale or obvious rules.
 
-Last Updated: 2026-07-02
+Last Updated: 2026-10-22

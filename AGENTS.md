@@ -10,13 +10,16 @@ testing and manual verification.
 ## Repository Structure
 
 - `.agents/` - Repo-owned agent skills and workflow documentation.
+- `.github/` - CI (`ci.yml`) and Release Please publishing workflows.
 - `_bmad/` - BMAD workflow/config files used to generate project context.
 - `_bmad-output/` - Generated BMAD project context for AI agents.
 - `demo-app/` - Laravel 12 + Inertia + Vue/Vuetify demo application.
 - `docs/` - User-facing package documentation, mostly upstream-compatible
   modal topics adapted for this package.
 - `example/` - Small standalone Vite/Vue/Vuetify example app.
-- `src/` - Published package source and public exports.
+- `src/` - Published package source, public exports, and hand-written types
+  (`src/index.d.ts`).
+- `tests/` - Vitest + happy-dom suite for the package.
 - `bun.lock` - Root Bun lockfile for the package workspace.
 - `package.json` - Package metadata, npm exports, peer deps, and build scripts.
 - `release-please-config.json` - Release Please config for changelog/versioning.
@@ -34,6 +37,12 @@ Root package development server for `example/`:
 
 ```sh
 bun run dev
+```
+
+Root package tests:
+
+```sh
+bun run test
 ```
 
 Root package build:
@@ -105,6 +114,13 @@ cd demo-app
 npm run lint:test
 ```
 
+Demo type check (also validates `src/index.d.ts` against real usage):
+
+```sh
+cd demo-app
+npm run typecheck
+```
+
 Demo app Pest/PHPUnit tests:
 
 ```sh
@@ -112,17 +128,17 @@ cd demo-app
 composer run test
 ```
 
-> TODO: No root JavaScript test, lint, type-check, debug, or deploy scripts are
-> defined in `package.json`.
-
-> TODO: No CI workflow file is present in this checkout.
+> TODO: No root lint or formatter config exists.
 
 ## Code Style & Conventions
 
 - Keep root package source as JavaScript Vue SFCs under `src/`.
 - Use ESM syntax and preserve `"type": "module"` in root `package.json`.
 - Treat `src/index.js` as the public API; new public helpers/components need an
-  explicit export.
+  explicit export and a matching declaration in `src/index.d.ts`.
+- Import Vuetify components explicitly (`vuetify/components/VDialog`) and use
+  PascalCase tags in package SFCs. The built `dist` cannot rely on global
+  registration or `vite-plugin-vuetify` auto-imports in consumer apps.
 - Prefer Vue `<script setup>` and Composition API primitives already in use.
 - Match the touched file's local style. Source currently mixes quote and indent
   style, and no root ESLint/Prettier config exists.
@@ -146,7 +162,6 @@ flowchart TD
     Upstream[@inertiaui/modal-vue]
     Modal[Modal.vue]
     ModalContent[ModalContent.vue]
-    Slideover[SlideoverContent.vue]
     CloseButton[CloseButton.vue]
     Config[src/config.js]
     Vuetify[Vuetify v-dialog/v-card/v-btn]
@@ -156,48 +171,65 @@ flowchart TD
     PublicAPI --> Upstream
     PublicAPI --> Modal
     PublicAPI --> Config
+    Config --> Upstream
     Modal --> Upstream
     Modal --> ModalContent
-    Modal --> Slideover
     ModalContent --> CloseButton
-    Slideover --> CloseButton
     ModalContent --> Vuetify
-    Slideover --> Vuetify
     CloseButton --> Vuetify
     Demo --> PublicAPI
 ```
 
 `@inertiaui/modal-vue` owns modal routing, state, stack, lifecycle, local
-modals, deferred props, and app rendering helpers. This package adapts the
-presentation layer to Vuetify by wrapping `HeadlessModal` in `Modal.vue` and
-choosing `ModalContent.vue` or `SlideoverContent.vue` based on config.
+modals, deferred props, and app rendering helpers; `ModalLink` and most helpers
+are re-exported unchanged. This package adapts the presentation layer to
+Vuetify: `Modal.vue` wraps `HeadlessModal` and forwards its events, slot props,
+and exposed API, and `ModalContent.vue` renders one `v-dialog` + `v-card` for
+both modals and slideovers.
 
-`ModalContent.vue` renders centered dialog content. `SlideoverContent.vue`
-renders drawer-style content using Vuetify slide transitions. Both provide the
-computed `modalContext` injection for nested controls such as `CloseButton.vue`
-and call `modalContext.afterLeave` from the actual Vue/Vuetify leave
-transition.
+`ModalContent.vue` maps config to `v-dialog` props: `closeExplicitly` →
+`persistent`, `position` → `location`, `maxWidth` → `max-width`, and only the
+top modal gets a scrim. Slideovers are full-height dialogs on a physical side
+(RTL-aware) with a Web Animations slide that fades under reduced motion. It
+calls `modalContext.afterLeave` from the dialog's `after-leave`, provides
+`modalContext` so slot content of local modals can call `useModal()`, marks
+the configured `appElement` `aria-hidden` while open, and returns focus to the
+element that opened the modal. Vuetify's own scroll blocking and focus trap
+are used; do not add upstream's `lockScroll` on top.
 
-`src/config.js` maps upstream Tailwind-style max-width tokens to pixel values
-for Vuetify and maps modal positions to Vuetify locations. Unknown max-width
-tokens intentionally fall back to `2xl`.
+`src/config.js` maps upstream max-width tokens to Tailwind's widths and modal
+positions to Vuetify locations; unknown max-width tokens intentionally fall
+back to `2xl`. It also wraps upstream `putConfig`/`resetConfig` so the
+`paddingClasses`/`panelClasses` defaults are Vuetify classes; upstream's are
+Tailwind (`bg-white` is a real Vuetify utility and breaks dark themes).
 
-The root library build outputs ESM and CommonJS bundles to `dist/` and keeps
-Vue, Vuetify, Inertia, and upstream modal packages external. The demo app
-aliases `@gigerit/inertia-modal-vuetify` to `../src/index.js` so local source
-changes can be tested before publishing.
+The root library build outputs one ESM bundle to `dist/` with no CSS and keeps
+Vue, Vuetify, Inertia, and the upstream modal packages external. Types live in
+`src/index.d.ts` and serve both `.` and `./src` exports. The demo app aliases
+`@gigerit/inertia-modal-vuetify` to `../src/index.js` (and `tsconfig` `paths` to
+`../src/index.d.ts`), dedupes Vue/Vuetify/Inertia/modal imports to its own
+`node_modules`, and must declare the adapter's runtime dependencies itself.
 
 ## Testing Strategy
 
-- Root package has no JavaScript test runner at present.
-- Minimum verification for package source/export changes: run `bun run build`.
+- Minimum verification for package source/export changes: `bun run test` and
+  `bun run build`.
+- `tests/Modal.test.js` mounts real Vuetify dialogs in happy-dom with real
+  transitions (`stubs: { transition: false }`) and drives local modals through
+  the upstream stack. Extend it for lifecycle changes, and check that a new
+  test fails when the behavior it covers is removed.
+- Changes to `src/index.d.ts` must pass `npm run typecheck` in `demo-app`.
 - For integration-facing changes, also run `bun run build:example` and the demo
   app build from `demo-app`.
-- Demo Laravel tests run through `composer run test`; current tests are starter
-  examples and do not validate modal behavior.
+- Demo Laravel tests run through `composer run test`; they cover the demo's
+  modal routes, not adapter behavior.
 - For UI/lifecycle changes, manually verify modal open/close, backdrop close,
-  Escape close, `closeExplicitly`, left/right slideovers, nested stacks,
-  scrim behavior, `aria-hidden`, and transition cleanup.
+  Escape close, `closeExplicitly`, `closeOnClickOutside`, left/right
+  slideovers, nested stacks, scrim behavior, `aria-hidden`, focus return, and
+  transition cleanup in both light and dark themes. Use `example/` for local
+  modals and `demo-app/` for routed, navigate-mode, and SSR behavior.
+- The DOM is not proof of cleanup: Vuetify removes a closed dialog's overlay
+  even when `afterLeave` never ran. Check that `useModalStack().stack` empties.
 - For packaging changes, test both published root exports and the demo alias to
   `src/index.js`.
 - Add focused automated coverage when introducing pure helpers or test
@@ -229,10 +261,15 @@ changes can be tested before publishing.
   Research upstream docs/source/issues first when lifecycle behavior changes.
 - Preserve `HeadlessModal` compatibility: forwarded events, slot props, and
   exposed methods/getters are public surface.
-- `closeExplicitly` must block backdrop, Escape, and browser-back closure
-  consistently through Vuetify dialog behavior.
-- Vuetify dialog content is teleported. Use global selectors when changing
-  overlay-container layout; scoped selectors cannot reach teleported wrappers.
+- `closeExplicitly` maps to `v-dialog` `persistent`, which blocks backdrop and
+  Escape. Browser back belongs to Inertia and upstream `ModalRoot`; Vuetify's
+  `close-on-back` only works with vue-router, so keep it `false`.
+- The package ships no CSS: Vite library builds do not inject it, and consumers
+  could not import it. Express layout through `v-dialog` props, `content-props`
+  styles, and Vuetify utility classes. Vuetify dialog content is teleported, so
+  any consumer CSS must use global selectors.
+- Route configuration defaults through `src/config.js`; never let upstream's
+  Tailwind `paddingClasses`/`panelClasses` defaults reach rendered markup.
 - Preserve stacked-modal behavior: only top modal gets scrim, covered modals use
   `aria-hidden`, and modal context controls focus/blur state.
 - `false` is meaningful for class and close-button config. Do not replace
@@ -247,18 +284,20 @@ changes can be tested before publishing.
 ## Extensibility Hooks
 
 - Public exports live in `src/index.js`.
-- `putConfig`, `getConfig`, and `resetConfig` come from `@inertiaui/modal-vue`
-  and control modal defaults.
+- `getConfig` comes from `@inertiaui/modal-vue`; `putConfig` and `resetConfig`
+  are wrapped in `src/config.js` to keep Vuetify class defaults.
 - `renderApp(App, props)` must be used when mounting Inertia apps that use this
   modal adapter.
-- `ModalLink` forwards attributes and slot content to upstream `ModalLink`.
+- `ModalLink` is upstream's component, re-exported unchanged; `:as="VBtn"`
+  renders it as a Vuetify button.
 - `Modal` accepts upstream-compatible modal config such as `closeButton`,
   `closeExplicitly`, `maxWidth`, `paddingClasses`, `panelClasses`, `position`,
   and `slideover`.
 - `getMaxWidth()` and `getDialogLocation()` are package helper hooks in
   `src/config.js`.
 - Demo app Vite aliases can be adjusted in `demo-app/vite.config.ts` when
-  testing source versus built package behavior.
+  testing source versus built package behavior; keep `tsconfig.json` `paths`
+  in sync.
 - Environment variables follow Laravel/Vite conventions in `demo-app/.env*`,
   including `VITE_APP_NAME`.
 

@@ -11,7 +11,7 @@ Last verified sync for this adapter against `inertiaui/modal`.
 ## Source
 
 - Repository: https://github.com/inertiaui/modal.git
-- Branch: main
+- Branch: <upstream default branch, e.g. 3.x>
 - Synced commit: `<full-sha-or-tag>`
 - Synced commit title: `<subject line>`
 - Synced at: `<YYYY-MM-DD>`
@@ -33,11 +33,13 @@ Last verified sync for this adapter against `inertiaui/modal`.
 
 ## Verification
 
+- [ ] `bun run test`
 - [ ] `bun run build`
 - [ ] `bun run build:example`
 - [ ] `cd demo-app && npm run build`
 - [ ] `cd demo-app && npm run build:ssr`
 - [ ] `cd demo-app && npm run format:check`
+- [ ] `cd demo-app && npm run typecheck`
 - [ ] `cd demo-app && composer run test`
 - [ ] `bun list --all | rg '@inertiaui/modal-vue|@inertiajs/vue3|vue@|vuetify'`
 - [ ] `npm pack --dry-run --json`

@@ -18,7 +18,7 @@ These come from `@inertiaui/modal-vue` and are re-exported or consumed directly:
 | `vue/src/Deferred.vue` | public re-export |
 | `vue/src/WhenVisible.vue` | public re-export |
 | `vue/src/ModalRoot.vue` / renderer | public root/rendering behavior re-export |
-| `vue/src/ModalLink.vue` | wrapped by `src/ModalLink.vue` |
+| `vue/src/ModalLink.vue` | re-exported unchanged from `src/index.js` |
 
 Contract changes here usually require adapter source updates, package metadata
 updates, or docs changes. Do not copy these files into this repo.
@@ -32,9 +32,8 @@ counterpart and port behavior intentionally.
 | --- | --- | --- |
 | `vue/src/Modal.vue` | `src/Modal.vue` | Headless slot props, emitted events, exposed methods, stacking, scrim/backdrop, close behavior |
 | `vue/src/ModalContent.vue` | `src/ModalContent.vue` | centered modal transition, close button placement, classes, `afterLeave` timing |
-| `vue/src/SlideoverContent.vue` | `src/SlideoverContent.vue` | left/right transitions, width, close button, overflow, `afterLeave` timing |
+| `vue/src/SlideoverContent.vue` | `src/ModalContent.vue` (slideover branch) | left/right transitions, width, close button, overflow, `afterLeave` timing |
 | `vue/src/CloseButton.vue` | `src/CloseButton.vue` | injected context, close semantics, accessibility label |
-| `vue/src/ModalLink.vue` | `src/ModalLink.vue` | attrs/slots and new props/events passthrough |
 | `vue/src/config.js` | `src/config.js` | max width tokens, positions, default semantics |
 | `vue/src/index.js` or package exports | `src/index.js` | public re-exports and helper availability |
 
@@ -43,12 +42,14 @@ counterpart and port behavior intentionally.
 Preserve these adapter behaviors unless intentionally changed:
 
 - `v-dialog` uses upstream `isOpen` and `setOpen`.
-- `closeExplicitly` blocks backdrop, Escape, and browser-back closure through
-  Vuetify-compatible controls.
+- `closeExplicitly` maps to `v-dialog` `persistent` (backdrop and Escape);
+  `closeOnClickOutside: false` swallows only the close after `click:outside`.
+  Browser back stays with upstream `ModalRoot` (`close-on-back` is `false`).
 - Only top modal has scrim; covered modals receive `aria-hidden`.
 - `modalContext.afterLeave` is called from actual Vue/Vuetify leave transition.
-- Slideover content uses global selectors because Vuetify dialog content is
-  teleported.
+- No package CSS: layout comes from `v-dialog` props and `content-props`
+  styles, and upstream's Tailwind class defaults are replaced in
+  `src/config.js`.
 - `false` remains meaningful for `closeButton`, `paddingClasses`, and
   `panelClasses` semantics; do not collapse boolean/nullish behavior.
 - Public `im-` classes remain customization hooks.
@@ -63,7 +64,8 @@ Preserve these adapter behaviors unless intentionally changed:
   transitions, `afterLeave`, Escape/backdrop/browser-back behavior.
 - New stacked modal behavior -> check scrim, `aria-hidden`, z-index, focus/blur.
 - New config keys -> update adapter props, `src/config.js`, docs, examples, demo.
-- New `ModalLink` props/events -> ensure `src/ModalLink.vue` forwards them.
+- New `ModalLink` props/events -> pass through automatically; update docs and
+  `src/index.d.ts` if the re-export list changes.
 - New public exports -> update `src/index.js` and type/docs expectations.
 - New peer/runtime dependencies -> update root/demo metadata and Vite externals.
 - Upstream switch away from current source layout -> inspect package exports and
@@ -73,11 +75,11 @@ Preserve these adapter behaviors unless intentionally changed:
 
 Check these when backend shape, setup, or user-visible behavior changes:
 
-- `example/pages/Index.vue`
-- `example/components/*.vue`
+- `example/App.vue` and `example/components/*.vue` (local modals)
 - `example/main.js`
 - `demo-app/resources/js/app.ts`
 - `demo-app/resources/js/ssr.ts`
-- `demo-app/resources/js/Pages/**`
-- `demo-app/routes/web.php`
-- `demo-app/app/Http/**` or modal controllers
+- `demo-app/resources/js/pages/**`
+- `demo-app/routes/web.php` (routed modals)
+- `demo-app/tests/Feature/ModalRoutesTest.php`
+- `tests/Modal.test.js` (adapter lifecycle contracts)
