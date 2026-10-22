@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --frozen-lockfile
+      - run: bun run test
+      - run: bun run build
+      - run: bun run build:example
+
+  demo:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: demo-app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+
+      - uses: oven-sh/setup-bun@v2
+
+      # The demo type-checks against ../src/index.d.ts, whose imports resolve from the root install.
+      - run: bun install --frozen-lockfile
+        working-directory: .
+      - run: composer install --no-interaction --no-progress
+      - run: cp .env.example .env && php artisan key:generate
+      - run: npm ci
+      - run: npm run lint:test
+      - run: npx eslint .
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm run build:ssr
+      - run: composer run test
