@@ -44,7 +44,7 @@ The `close-on-click-outside` prop controls whether clicking the backdrop closes 
 
 ### `max-width`
 
-The `max-width` lets you specify the maximum width of the modal. For modals, the default value is `2xl`, and for slideover, the default value is `md`. These are upstream's Tailwind tokens, mapped to the same widths: `sm` 384px, `md` 448px, `lg` 512px, `xl` 576px, `2xl` 672px, `3xl` 768px, `4xl` 896px, `5xl` 1024px, `6xl` 1152px, and `7xl` 1280px. Unknown values fall back to `2xl`.
+The `max-width` lets you specify the maximum width of the modal. For modals, the default value is `2xl`, and for slideover, the default value is `md`. These are the same tokens as in `@inertiaui/modal-vue` (Tailwind's `max-w-*` scale), mapped to the same widths: `sm` 384px, `md` 448px, `lg` 512px, `xl` 576px, `2xl` 672px, `3xl` 768px, `4xl` 896px, `5xl` 1024px, `6xl` 1152px, and `7xl` 1280px. Unknown values fall back to `2xl`.
 
 ```vue
 <template>
@@ -82,7 +82,7 @@ These classes are merged with the padding classes. They are separated by a diffe
 
 ### `position`
 
-The `position` prop allows you to specify the position of the modal. The default value is `center` for modals and `right` for slideover. Valid values for modals are `bottom`, `center`, and `top`. Valid values for slideover are `left` and `right`.
+The `position` prop allows you to specify the position of the modal. The default value is `center` for modals and `right` for slideover. Valid values for modals are `bottom`, `center`, and `top`. Valid values for slideover are `left`, `right`, and `bottom`, which opens it as a bottom sheet.
 
 ```vue
 <template>
@@ -104,12 +104,52 @@ The `slideover` prop allows you to open the modal as a slideover instead of a mo
 </template>
 ```
 
+## Modal-only Props
+
+These props go on the `Modal` component itself, not on `ModalLink`.
+
+### `title`
+
+Renders a card header with the title and the close button, and labels the dialog with it. Use the `#title` slot for richer content. Together with the `#actions` slot, the header and actions stay in place while the content scrolls.
+
+```vue
+<template>
+    <Modal title="Create User">
+        <!-- Form -->
+
+        <template #actions="{ close }">
+            <v-btn @click="close">Cancel</v-btn>
+        </template>
+    </Modal>
+</template>
+```
+
+### `fullscreen`
+
+Controls when the modal fills the screen. The default is `'sm'` for modals (fullscreen on phones) and `false` for slideovers. Pass `true` or `false`, a Vuetify breakpoint name (`sm`, `md`, `lg`, `xl`, `xxl`) or a pixel width to go fullscreen below it, or `'mobile'` to follow your Vuetify `display.mobileBreakpoint`. It can also be set in `visitModal`'s `config` and with `putConfig`.
+
+```vue
+<template>
+    <Modal fullscreen="md">
+        <!-- ... -->
+    </Modal>
+</template>
+```
+
+### `before-close`
+
+A function that runs before the close button, Escape, a backdrop click, or the `requestClose` slot prop closes the modal. Return `false`, or a promise that resolves to `false`, to keep the modal open. See [Close Modal](/close-modal).
+
+### `dialog-props` and `card-props`
+
+Extra props for the underlying `v-dialog` and `v-card`, for example `:dialog-props="{ scrim: 'primary' }"` or `:card-props="{ color: 'surface-variant' }"`. To style every modal, use the `InertiaModal` [Vuetify defaults](/styling#vuetify-defaults) instead.
+
 ## Default configuration
 
 You can set the default configuration for all modals and slideovers by importing the `putConfig` function from the package, for example, in your `app.js` file.
 
 ```js
-import { putConfig } from '@gigerit/inertia-modal-vuetify'
+import { putConfig } from '@inertia-vuetify/modal'
 ```
 
 You can call the `putConfig` function with an object containing the configuration that you want to set as the default. Here is an example with the default configuration. Note that there are separate keys for modals and slideovers.
@@ -126,6 +166,7 @@ putConfig({
         paddingClasses: 'pa-4 pa-sm-6',
         panelClasses: '',
         position: 'center',
+        fullscreen: 'sm',
     },
     slideover: {
         closeButton: true,
@@ -135,11 +176,12 @@ putConfig({
         paddingClasses: 'pa-4 pa-sm-6',
         panelClasses: '',
         position: 'right',
+        fullscreen: false,
     },
 })
 ```
 
-Instead of passing a whole object, you can also pass just the keys that you want to override. The other values will be taken from the default configuration. Import `putConfig` from this package rather than `@inertiaui/modal-vue`, so omitted class keys keep their Vuetify defaults instead of upstream's Tailwind classes.
+Instead of passing a whole object, you can also pass just the keys that you want to override. The other values will be taken from the default configuration.
 
 ```js
 putConfig({

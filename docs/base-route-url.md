@@ -4,7 +4,7 @@ By default, Inertia Modal doesn't change the URL when opening a modal. It just s
 
 * It allows users to bookmark the modal and share the URL with others.
 * The modal becomes part of the browser history, so users can use the back and forward buttons.
-* It makes the modal content accessible to search engines (when using [SSR](https://inertiajs.com/server-side-rendering)).
+* With [SSR](https://inertiajs.com/server-side-rendering), the base page is server-rendered under the modal URL. The modal itself appears once the app hydrates, because Vuetify renders overlays on the client only.
 * It allows you to open the modal in a new tab.
 
 ## Define a Base Route
@@ -50,7 +50,7 @@ Next, the frontend needs to know that we're using the browser history to navigat
 Instead of adding the `navigate` attribute to each `ModalLink` component, you can configure this globally in your main `app.js` file. Just like the other [configuration options](/configuration#default-configuration), you can use the `putConfig` function to set the `navigate` option to `true`:
 
 ```js
-import { putConfig } from '@gigerit/inertia-modal-vuetify'
+import { putConfig } from '@inertia-vuetify/modal'
 putConfig('navigate', true)
 ```
 

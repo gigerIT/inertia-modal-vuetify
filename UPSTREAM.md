@@ -1,6 +1,9 @@
 # Upstream Tracker
 
-Last verified sync for this adapter against `inertiaui/modal`.
+The modal runtime in `src/` is a TypeScript port of `@inertiaui/modal-vue`
+from `inertiaui/modal` and talks to that repository's Laravel package. Upstream
+changes reach this package only when they are ported with the
+`sync-inertia-modal-upstream` skill (`.agents/skills/`).
 
 ## Source
 
@@ -9,53 +12,56 @@ Last verified sync for this adapter against `inertiaui/modal`.
 - Synced commit: `e8a4d2672bb67051177add51ac58ee82176330e5`
 - Synced commit title: `Navbar`
 - Synced at: `2026-10-22`
+- Matches release: `inertiaui/modal` and `@inertiaui/modal-vue` 3.1.2
 
-## Upstream Vue Package
+## Divergences
 
-- Package: `@inertiaui/modal-vue`
-- Version: `3.1.2`
-- Install source: npm package
+Runtime:
 
-## Adapter Changes Required
+- `ModalRoot` closes the modals when a non-GET visit finishes on a page
+  without `_inertiaui_modal`. Inertia 3 swaps in a same-URL response, such as
+  a redirect back, without a `navigate` event (inertiaui/modal#228).
+- `ModalRoot` registers its request interceptor only in the browser; upstream
+  leaks one per SSR render (inertiaui/modal#284, fix in #288).
+- `HeadlessModal` discards the previous stack entry when a local modal is
+  reopened while it is still leaving (inertiaui/modal#290).
+- Modal visits work when the app sets Inertia's `progress: false`; upstream's
+  `progress.start()` throws and the visit fails. Not reported upstream.
+- Navigate-mode visits served from the prefetch cache record the base URL
+  first, so closing restores it. Not reported upstream.
+- `renderApp` types its props as `Record<string, any>` (inertiaui/modal#289).
+- `ModalInstance.reload()` returns a promise.
+- `ModalLink` leaves Ctrl/Cmd/Shift/Alt-clicks on links to the browser.
+- `HeadlessModal`'s exposed `modalContext` returns the modal instance;
+  upstream's returns `undefined`.
+- `WhenVisible`'s error names `WhenVisible` instead of `Deferred`.
 
-- None from upstream: the 20 commits since `0d003ee` only touch docs and CI.
-- Adapter rewrite in the same pass (not upstream-driven):
-  - `src/ModalContent.vue` renders both variants with one `v-dialog`, calls
-    `afterLeave` from the dialog's `after-leave`, and replaces the removed
-    `src/SlideoverContent.vue`.
-  - `src/ModalLink.vue` removed; `ModalLink` is re-exported from upstream.
-  - `src/config.js` wraps `putConfig`/`resetConfig` so upstream's Tailwind
-    `paddingClasses`/`panelClasses` defaults never reach Vuetify.
-  - Vuetify's dialog scroll blocking replaces upstream's `lockScroll`.
+Presentation:
 
-## Demo And Docs Changes
+- `Modal.vue`, `ModalContent.vue`, and `CloseButton.vue` render Vuetify
+  `v-dialog` and `v-card`. Slideovers and bottom sheets share
+  `ModalContent.vue` and `transitions.ts`, so `SlideoverContent.vue` and
+  `constants.ts` have no counterpart.
+- Config defaults are Vuetify classes, `fullscreen` is an extra config key
+  (in `modalPropNames` and on `ModalLink`), and `useNativeDialog` is gone.
+- Local additions: `title`, `beforeClose`, `dialogProps`, and `cardProps` on
+  `Modal`, the `requestClose` slot prop, `ModalBtn`, `InertiaModal` Vuetify
+  defaults, and the `getMaxWidth`/`getDialogLocation` exports.
 
-- Demo moved to Laravel 13, `inertiajs/inertia-laravel` 3, and
-  `inertiaui/modal` 3.1; pages cover every modal variant.
-- Docs dropped React snippets and document SSR, widths, and Vuetify defaults.
+## Last Sync
+
+- Ported: the whole `vue/src` runtime at `e8a4d26`, replacing the
+  `@inertiaui/modal-vue` dependency, plus upstream's `config`, `helpers`, and
+  `modalStack` tests.
+- Skipped: the React package, Tailwind markup, and upstream's docs site and CI.
 
 ## Verification
 
-- [x] `bun run test`
-- [x] `bun run build`
-- [x] `bun run build:example`
-- [x] `cd demo-app && npm run build`
-- [x] `cd demo-app && npm run build:ssr` (SSR render of a routed modal checked)
-- [x] `cd demo-app && npm run format:check`
-- [x] `cd demo-app && npm run typecheck`
-- [x] `cd demo-app && composer run test`
-- [x] `bun list --all | rg '@inertiaui/modal-vue|@inertiajs/vue3|vue@|vuetify'`
-- [x] `npm pack --dry-run --json`
-- [x] Manual smoke completed when UI behavior changed
+- [x] Commands in the skill's `references/upgrade-checklist.md` (e2e SSR test
+  skipped locally; a modal URL was rendered through the SSR server instead)
+- [x] Smoke list covered by the browser and e2e suites
 
 ## Residual Risk
 
-- Upstream: reopening the same local modal while it is still leaving swaps
-  `HeadlessModal`'s context, so the old stack entry never gets `afterLeave`
-  and later modals get ever-growing indexes.
-- Upstream: in non-navigate mode, a form that redirects back to the base URL
-  does not close the modal, because Inertia 3 replaces same-URL visits without
-  firing `navigate`. Close explicitly in `onSuccess`.
-- Upstream: `renderApp` is typed for Inertia 2 props; `src/index.d.ts`
-  overrides it until upstream fixes the declaration.
+- The two upstream bugs marked "Not reported upstream" above.
 - Animation timing was only smoke-tested in a throttled automation browser.

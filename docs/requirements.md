@@ -6,6 +6,6 @@ Inertia Modal has the following requirements:
 - Vuetify 4.2+
 - `@inertiajs/vue3` 3+
 
-The package is designed and tested to work with Laravel and Inertia.js 3. It may work with other backend frameworks and Inertia.js versions, but this adapter's peer dependencies target the Vue 3 / Inertia 3 / Vuetify 4 stack. On the Laravel side, use `inertiaui/modal` 3.x with `inertiajs/inertia-laravel` 3.x.
+The package is designed and tested to work with Laravel and Inertia.js 3. It may work with other backend frameworks and Inertia.js versions, but this package's peer dependencies target the Vue 3 / Inertia 3 / Vuetify 4 stack. On the Laravel side, use `inertiaui/modal` 3.x with `inertiajs/inertia-laravel` 3.x.
 
 The Base Route / URL feature is provided by the Laravel `inertiaui/modal` backend package.

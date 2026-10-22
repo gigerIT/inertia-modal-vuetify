@@ -1,6 +1,6 @@
 # Introduction
 
-This package is a Vuetify adapter for [InertiaUI Modal](https://inertiaui.com/modal). With it, you can open any route in a Vuetify-styled Modal or Slideover without changing your existing routes or controllers.
+This package is a Vuetify frontend for the [InertiaUI Modal](https://inertiaui.com/modal) Laravel package. With it, you can open any route in a Vuetify-styled Modal or Slideover without changing your existing routes or controllers. Its API matches InertiaUI Modal's Vue package, `@inertiaui/modal-vue`.
 
 Here's a summary of the features:
 
@@ -8,7 +8,11 @@ Here's a summary of the features:
 - Zero backend configuration
 - Super simple frontend API
 - Support for Base Route / URL
-- Modal and slideover support
+- Modal, slideover, and bottom sheet support
+- Fullscreen modals on phones
+- Card layout with a pinned title and actions
+- Unsaved-changes guard with `before-close`
+- `ModalBtn`, a Vuetify button with a loading state
 - Headless support
 - Nested/stacked modals support
 - Reusable modals
@@ -23,7 +27,7 @@ The package comes with two components: `Modal` and `ModalLink`. `ModalLink` is v
 
 ```vue
 <script setup>
-import { ModalLink } from '@gigerit/inertia-modal-vuetify'
+import { ModalLink } from '@inertia-vuetify/modal'
 </script>
 
 <template>
@@ -35,7 +39,7 @@ The page you linked can then use the `Modal` component to wrap its content in a 
 
 ```vue
 <script setup>
-import { Modal } from '@gigerit/inertia-modal-vuetify'
+import { Modal } from '@inertia-vuetify/modal'
 </script>
 
 <template>

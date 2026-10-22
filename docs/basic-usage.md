@@ -5,14 +5,14 @@ As described in the [introduction](/introduction), Inertia Modal is fairly simpl
 To use the components, you need to import them into your page:
 ```vue
 <script setup>
-import { Modal, ModalLink } from '@gigerit/inertia-modal-vuetify'
+import { Modal, ModalLink } from '@inertia-vuetify/modal'
 </script>
 ```
 
 Instead of importing the components on every page, you may also consider importing them globally in your `app.js` file:
 
 ```js{7-8}
-import { Modal, ModalLink, renderApp } from '@gigerit/inertia-modal-vuetify'
+import { Modal, ModalLink, renderApp } from '@inertia-vuetify/modal'
 
 createInertiaApp({
     setup({ el, App, props, plugin }) {
@@ -114,6 +114,22 @@ The `as` prop allows you to change the tag that is rendered. You can use it to r
 </template>
 ```
 
+### Vuetify Button
+
+`ModalBtn` renders the link as a `v-btn`. It accepts all `v-btn` and `ModalLink` props, shows the button's loading spinner while the modal is being fetched, and leaves Ctrl/Cmd-clicks to the browser so they still open a new tab.
+
+```vue
+<script setup>
+import { ModalBtn } from '@inertia-vuetify/modal'
+</script>
+
+<template>
+    <ModalBtn href="/users/create" color="primary" prepend-icon="mdi-plus">
+        Create User
+    </ModalBtn>
+</template>
+```
+
 ### Loading State
 
 The `ModalLink` component has a `loading` slot prop that you can use to show a loading state while the modal is being fetched. You can use this prop to display a loading spinner or text.
@@ -169,7 +185,7 @@ Instead of using the `ModalLink` component, you can also open a modal programmat
 
 ```vue
 <script setup>
-import { visitModal } from '@gigerit/inertia-modal-vuetify'
+import { visitModal } from '@inertia-vuetify/modal'
 
 function createUserModal() {
     visitModal('/users/create')

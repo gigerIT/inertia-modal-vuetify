@@ -32,7 +32,7 @@ If you're using child components within your modal, you can pass props to them, 
 
 ```vue
 <script setup>
-import { useModal } from '@gigerit/inertia-modal-vuetify'
+import { useModal } from '@inertia-vuetify/modal'
 
 const { props } = useModal()
 </script>

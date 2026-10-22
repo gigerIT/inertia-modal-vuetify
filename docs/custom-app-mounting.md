@@ -4,7 +4,7 @@ If you need more refined control over the mounting process, contrary to the regu
 
 ```js
 import { createInertiaApp } from '@inertiajs/vue3'
-import { ModalRoot } from '@gigerit/inertia-modal-vuetify'
+import { ModalRoot } from '@inertia-vuetify/modal'
 import { createApp, h } from 'vue'
 import { createVuetify } from 'vuetify'
 

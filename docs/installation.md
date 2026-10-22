@@ -1,6 +1,6 @@
 # Installation
 
-Install the Laravel backend package when your app uses the InertiaUI Modal server helpers, then install this Vuetify frontend adapter with npm. This adapter replaces the upstream Vue frontend package while keeping the same modal runtime API.
+Install the InertiaUI Modal Laravel package, then this Vuetify frontend from npm. It replaces `@inertiaui/modal-vue` and keeps its API, so don't install both.
 
 ## Composer Installation
 
@@ -8,12 +8,12 @@ Install the Laravel backend package when your app uses the InertiaUI Modal serve
 composer require inertiaui/modal
 ```
 
-After installing the Composer package, install the Vuetify adapter from npm.
+After installing the Composer package, install the Vuetify frontend from npm.
 
 ## NPM Installation
 
 ```bash
-npm install @gigerit/inertia-modal-vuetify
+npm install @inertia-vuetify/modal
 ```
 
 ## Inertia.js Configuration
@@ -23,7 +23,7 @@ Inertia Modal requires a *root*-component to be mounted in your app. You can do 
 ```js
 import { createApp } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
-import { renderApp } from '@gigerit/inertia-modal-vuetify'
+import { renderApp } from '@inertia-vuetify/modal'
 import { createVuetify } from 'vuetify'
 
 createInertiaApp({
@@ -40,7 +40,7 @@ If you need more refined control over the mounting process, you should check out
 
 ## Vuetify Configuration
 
-This adapter renders with Vuetify components, so no Tailwind setup or stylesheet import is required. The close button uses Vuetify's `$close` icon alias and `$vuetify.close` locale message, so it follows your configured icon set and language.
+The package renders with Vuetify components, so no Tailwind setup or stylesheet import is required. The close button uses Vuetify's `$close` icon alias and `$vuetify.close` locale message, so it follows your configured icon set and language.
 
 For server-side rendering, let Vite bundle Vuetify and this package and pass `ssr: true` to Vuetify:
 
@@ -48,7 +48,7 @@ For server-side rendering, let Vite bundle Vuetify and this package and pass `ss
 // vite.config.js
 export default defineConfig({
     ssr: {
-        noExternal: ['vuetify', '@gigerit/inertia-modal-vuetify'],
+        noExternal: ['vuetify', '@inertia-vuetify/modal'],
     },
 })
 ```
