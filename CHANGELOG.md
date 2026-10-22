@@ -1,5 +1,54 @@
 # Changelog
 
+## [3.0.0](https://github.com/inertia-vuetify/modal/compare/v2.1.0...v3.0.0) (2026-10-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* the package is renamed to @inertia-vuetify/modal and no longer depends on @inertiaui/modal-vue. Install it, uninstall @gigerit/inertia-modal-vuetify and @inertiaui/modal-vue, and import everything from @inertia-vuetify/modal. @inertiajs/core ^3 is a new peer dependency, useNativeDialog is gone, and centered modals go fullscreen below the sm breakpoint (fullscreen: false opts out).
+* requires vuetify ^4.2.0. Package is ESM-only; the CommonJS build could not be required anyway. max-width tokens use upstream's Tailwind widths (2xl 672px, md 448px). The modal close button overlays the top-right corner instead of taking its own row.
+
+### Features
+
+* add bottom sheets via slideover position bottom ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+* add card layout with title and actions slots ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+* add ModalBtn, a Vuetify button that opens modals ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+* grow centered modals from the element that opened them ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+* guard closing with before-close and requestClose ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+* open centered modals fullscreen on small screens ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+* own the modal runtime as @inertia-vuetify/modal ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+* pass v-dialog and v-card props with dialog-props and card-props ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+* rebuild Vuetify presentation layer ([24fd501](https://github.com/inertia-vuetify/modal/commit/24fd5017d5cd015ca5aeda678802e8f1f12da027))
+* style all modals through InertiaModal Vuetify defaults ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+
+
+### Bug Fixes
+
+* close modals when a submission redirects back ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+* **deps:** refresh compatible frontend security graphs ([9a4f841](https://github.com/inertia-vuetify/modal/commit/9a4f841eff08f311c078c1fbe568de81d300e368))
+* **deps:** refresh frontend dependency graphs ([07def39](https://github.com/inertia-vuetify/modal/commit/07def395c8ca4241a2173dc29c1a65b18c8dbbe2))
+* keep covered modals open when clicking a nested modal ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+* keep the stack intact when reopening a closing local modal ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+* leave modifier clicks on ModalLink to the browser ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+* open modal visits when the Inertia progress bar is off ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+* restore the URL after closing a prefetched navigate modal ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+* stop leaking a request interceptor per SSR render ([3d4ea55](https://github.com/inertia-vuetify/modal/commit/3d4ea559209d77461ee7ec129e306b2f09f0cb3f))
+
+
+### Documentation
+
+* **agents:** sync agent guidance with rebuilt adapter ([f4b6b0b](https://github.com/inertia-vuetify/modal/commit/f4b6b0be3d9b8c4889233d23b689733968735831))
+* **agents:** update guidance for the owned runtime ([3fc9695](https://github.com/inertia-vuetify/modal/commit/3fc9695f9391ce37ccbfa9af2181bc78150d550d))
+* document the standalone runtime and rename ([ee6ae65](https://github.com/inertia-vuetify/modal/commit/ee6ae654dd235b2cc3e411d9f0779f5268d813f3))
+* drop React examples and document Vuetify setup ([bc8bccd](https://github.com/inertia-vuetify/modal/commit/bc8bccdded1cedf8aaf78f8e515bfd32cb26b30c))
+
+
+### Miscellaneous Chores
+
+* **demo-app:** upgrade to Laravel 13 and Inertia 3 ([95428fe](https://github.com/inertia-vuetify/modal/commit/95428fee63be6d1e86f60502bf49b73f8982e409))
+* **example:** port the example to TypeScript ([41eefa4](https://github.com/inertia-vuetify/modal/commit/41eefa41ab11333f9debd9fcccd199c2fcad0528))
+* **example:** rebuild as local modal playground ([3abc920](https://github.com/inertia-vuetify/modal/commit/3abc92010629d4becaae53ba0a0924b97e4a21c5))
+
 ## [2.1.0](https://github.com/gigerIT/inertia-modal-vuetify/compare/v2.0.0...v2.1.0) (2026-07-02)
 
 
