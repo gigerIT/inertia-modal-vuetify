@@ -1,8 +1,5 @@
-// Re-export utilities and functions from @inertiaui/modal-vue
 export {
     getConfig,
-    putConfig,
-    resetConfig,
     initFromPageProps,
     renderApp,
     withInertiaModal,
@@ -15,13 +12,10 @@ export {
     dialogUtils,
     Deferred,
     HeadlessModal,
+    ModalLink,
     ModalRoot,
     WhenVisible,
 } from '@inertiaui/modal-vue'
 
-// Export our Vuetify-styled components
 export { default as Modal } from './Modal.vue'
-export { default as ModalLink } from './ModalLink.vue'
-
-// Export config helpers
-export { getMaxWidth, getDialogLocation } from './config.js'
+export { getDialogLocation, getMaxWidth, putConfig, resetConfig } from './config.js'

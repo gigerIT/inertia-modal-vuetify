@@ -1,26 +1,21 @@
 # @gigerit/inertia-modal-vuetify
 
-A Vuetify-styled drop-in replacement for [@inertiaui/modal-vue](https://github.com/inertiaui/modal). This package provides the same functionality as the original package but uses Vuetify components (`v-dialog`, `v-card`, `v-btn`) instead of Tailwind CSS for styling.
+A Vuetify-styled drop-in replacement for [@inertiaui/modal-vue](https://github.com/inertiaui/modal). Routing, the modal stack, local modals, deferred props and every other behavior come from the upstream package; this package renders modals and slideovers with Vuetify's `v-dialog` and `v-card` instead of Tailwind CSS.
 
 ## Features
 
 - ✅ **Drop-in replacement** - Same API as `@inertiaui/modal-vue`
-- ✅ **Vuetify 4 styling** - Uses `v-dialog`, `v-card`, and other Vuetify components
+- ✅ **Vuetify 4 styling** - `v-dialog`, `v-card` and your Vuetify theme, icons and locale
 - ✅ **Zero backend configuration** - Works with existing Inertia.js routes
-- ✅ **Modal and slideover support** - Both dialog and drawer-style modals
-- ✅ **Nested/stacked modals** - Support for multiple modals
+- ✅ **Modal and slideover support** - Centered dialogs and full-height side panels
+- ✅ **Nested/stacked modals** - Covered modals are blurred and hidden from assistive technology
 - ✅ **Local modals** - Modals that don't require a route
-- ✅ **Highly configurable** - Customizable sizes, positions, and behavior
-- ✅ **Full feature parity** - All features from the original package
+- ✅ **TypeScript** - Typed props, slots, events and exposed methods
 
 ## Installation
 
 ```bash
 npm install @gigerit/inertia-modal-vuetify
-# or
-yarn add @gigerit/inertia-modal-vuetify
-# or
-pnpm add @gigerit/inertia-modal-vuetify
 # or
 bun add @gigerit/inertia-modal-vuetify
 ```
@@ -30,54 +25,58 @@ bun add @gigerit/inertia-modal-vuetify
 This package requires these peer dependencies:
 
 - `vue` ^3.5.0
-- `vuetify` ^4.0.0
+- `vuetify` ^4.2.0
 - `@inertiajs/vue3` ^3.0.0
 
-It also installs `@inertiaui/modal-vue` automatically as a runtime dependency.
+`@inertiaui/modal-vue` is installed automatically as a runtime dependency. On the Laravel side, install the matching [`inertiaui/modal`](https://inertiaui.com/inertia-modal/docs) package.
 
-Make sure you have Vuetify installed and configured in your project:
+The close button uses Vuetify's `$close` icon alias, so it follows whichever icon set you configured (Material Design Icons by default).
 
-```bash
-npm install vuetify @mdi/font
-```
+The package ships as ESM only and does not need a stylesheet import.
 
 ## Quick Start
 
 ### 1. Configure Inertia.js
 
-Update your `app.js` (or `main.js`) to use the `renderApp` function:
+Mount your app with `renderApp`:
 
 ```js
-import { createApp } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
-import { renderApp } from "@gigerit/inertia-modal-vuetify"; // [!code ++]
+import { renderApp } from "@gigerit/inertia-modal-vuetify";
+import { createApp } from "vue";
+import { createVuetify } from "vuetify";
 
 createInertiaApp({
   setup({ el, App, props, plugin }) {
-    return createApp({ render: renderApp(App, props) }) // [!code ++]
+    createApp({ render: renderApp(App, props) })
       .use(plugin)
+      .use(createVuetify())
       .mount(el);
   },
 });
 ```
 
-### 2. Use ModalLink Component
+### 2. Use the ModalLink component
 
 Replace Inertia's `Link` component with `ModalLink` to open routes in a modal:
 
 ```vue
 <script setup>
 import { ModalLink } from "@gigerit/inertia-modal-vuetify";
+import { VBtn } from "vuetify/components";
 </script>
 
 <template>
-  <ModalLink href="/users/create"> Create User </ModalLink>
+  <ModalLink href="/users/create">Create User</ModalLink>
+
+  <!-- Render as a Vuetify button; extra attributes are passed to it -->
+  <ModalLink href="/users/create" :as="VBtn" color="primary">Create User</ModalLink>
 </template>
 ```
 
-### 3. Wrap Content with Modal Component
+Use `:as="VBtn"` instead of nesting a `v-btn` inside `ModalLink`, which would put a button inside a link.
 
-In your modal route/page, wrap the content with the `Modal` component:
+### 3. Wrap the page content with Modal
 
 ```vue
 <script setup>
@@ -85,269 +84,174 @@ import { Modal } from "@gigerit/inertia-modal-vuetify";
 </script>
 
 <template>
-  <Modal>
-    <h1>Create User</h1>
-    <form>
+  <Modal v-slot="{ close }">
+    <h2 class="text-h6 mb-4">Create User</h2>
+    <v-form>
       <!-- Form fields -->
-    </form>
+    </v-form>
+    <v-btn @click="close">Cancel</v-btn>
   </Modal>
 </template>
 ```
+
+`Modal` already renders a padded `v-card`, so put your content in it directly. If you prefer Vuetify's card sections (`v-card-title`, `v-card-text`, ...), set `:padding-classes="false"`.
 
 That's it! No backend changes needed.
 
 ## Usage Examples
 
-### Basic Modal
+### Slideover
 
 ```vue
-<template>
-  <Modal>
-    <v-card>
-      <v-card-title>Modal Title</v-card-title>
-      <v-card-text> Modal content goes here </v-card-text>
-    </v-card>
-  </Modal>
-</template>
+<ModalLink href="/settings" slideover>Settings</ModalLink>
+<ModalLink href="/settings" slideover position="left">Settings</ModalLink>
 ```
 
-### Slideover (Drawer)
+### Size and position
 
 ```vue
-<template>
-  <ModalLink href="/settings" slideover> Open Settings </ModalLink>
-</template>
-
-<!-- In your settings page -->
-<template>
-  <Modal slideover>
-    <v-card class="h-100">
-      <v-card-title>Settings</v-card-title>
-      <v-card-text> Settings content </v-card-text>
-    </v-card>
-  </Modal>
-</template>
+<ModalLink href="/users/create" max-width="4xl">Create User</ModalLink>
+<ModalLink href="/users/create" position="top">Create User</ModalLink>
 ```
 
-### Custom Size
+### Local modal (no route required)
 
 ```vue
-<template>
-  <ModalLink href="/users/create" max-width="4xl"> Create User </ModalLink>
-</template>
-```
-
-### Local Modal (No Route Required)
-
-```vue
-<template>
-  <div>
-    <ModalLink href="#confirm-action"> Delete Item </ModalLink>
-
-    <Modal name="confirm-action">
-      <v-card>
-        <v-card-title>Confirm Action</v-card-title>
-        <v-card-text> Are you sure you want to delete this item? </v-card-text>
-        <v-card-actions>
-          <v-btn @click="modal.close()">Cancel</v-btn>
-          <v-btn color="error" @click="deleteItem">Delete</v-btn>
-        </v-card-actions>
-      </v-card>
-    </Modal>
-  </div>
-</template>
-
 <script setup>
-import { Modal, ModalLink, useModal } from "@gigerit/inertia-modal-vuetify";
-
-const modal = useModal();
+import { Modal, ModalLink } from "@gigerit/inertia-modal-vuetify";
 </script>
+
+<template>
+  <ModalLink href="#confirm-action">Delete Item</ModalLink>
+
+  <Modal name="confirm-action" v-slot="{ close }">
+    <p>Are you sure you want to delete this item?</p>
+    <div class="d-flex justify-end ga-2 mt-4">
+      <v-btn variant="text" @click="close">Cancel</v-btn>
+      <v-btn color="error" @click="deleteItem">Delete</v-btn>
+    </div>
+  </Modal>
+</template>
 ```
 
-### Programmatic Usage
+Components rendered inside a modal can call `useModal()` to get the modal instance, including inside local modals.
+
+### Closing after a form submission
 
 ```vue
-<script setup>
+<Modal v-slot="{ close }">
+  <v-form @submit.prevent="form.post('/users', { onSuccess: () => close() })">
+    <!-- ... -->
+  </v-form>
+</Modal>
+```
+
+### Programmatic usage
+
+```js
 import { visitModal } from "@gigerit/inertia-modal-vuetify";
 
-function openModal() {
-  visitModal("/users/create", {
-    config: {
-      maxWidth: "lg",
-      closeButton: true,
-    },
-    onClose: () => {
-      console.log("Modal closed");
-    },
-  });
-}
-</script>
-
-<template>
-  <v-btn @click="openModal">Open Modal</v-btn>
-</template>
+visitModal("/users/create", {
+  config: { maxWidth: "lg" },
+  onClose: () => console.log("Modal closed"),
+});
 ```
 
 ## Configuration
 
-### Modal Props
+### Modal props
 
-Both `Modal` and `ModalLink` components accept the following props:
+Both `Modal` and `ModalLink` accept these props:
 
-| Prop               | Type           | Default          | Description                                                                      |
-| ------------------ | -------------- | ---------------- | -------------------------------------------------------------------------------- |
-| `close-button`     | Boolean        | `true`           | Show/hide the close button                                                       |
-| `close-explicitly` | Boolean        | `false`          | Only close via button or programmatically                                        |
-| `close-on-click-outside` | Boolean  | `true`           | Allow closing by clicking the dialog backdrop                                    |
-| `max-width`        | String         | `'2xl'`          | Maximum width (`sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`) |
-| `padding-classes`  | String/Boolean | `'pa-4 pa-sm-6'` | Vuetify padding classes                                                          |
-| `panel-classes`    | String/Boolean | `''`             | Additional classes for the panel                                                 |
-| `position`         | String         | `'center'`       | Position (`top`, `center`, `bottom` for modals; `left`, `right` for slideovers)  |
-| `slideover`        | Boolean        | `false`          | Render as slideover instead of modal                                             |
+| Prop                     | Type           | Default (modal / slideover) | Description                                                 |
+| ------------------------ | -------------- | --------------------------- | ----------------------------------------------------------- |
+| `close-button`           | Boolean        | `true`                      | Show the close button                                       |
+| `close-explicitly`       | Boolean        | `false`                     | Only close via the close button or programmatically         |
+| `close-on-click-outside` | Boolean        | `true`                      | Close when the backdrop is clicked                          |
+| `max-width`              | String         | `'2xl'` / `'md'`            | Maximum width, see below                                    |
+| `padding-classes`        | String/Boolean | `'pa-4 pa-sm-6'`            | Padding classes for the content; `false` removes padding    |
+| `panel-classes`          | String/Boolean | `''`                        | Extra classes for the content                               |
+| `position`               | String         | `'center'` / `'right'`      | `top`, `center`, `bottom` for modals; `left`, `right` for slideovers |
+| `slideover`              | Boolean        | `false`                     | Render as a slideover instead of a modal                    |
 
-### Default Configuration
+`max-width` keeps upstream's Tailwind tokens and maps them to the same widths: `sm` 384px, `md` 448px, `lg` 512px, `xl` 576px, `2xl` 672px, `3xl` 768px, `4xl` 896px, `5xl` 1024px, `6xl` 1152px, `7xl` 1280px. Unknown values fall back to `2xl`.
 
-You can set default configuration for all modals:
+### Default configuration
 
 ```js
 import { putConfig } from "@gigerit/inertia-modal-vuetify";
 
 putConfig({
   modal: {
-    closeButton: true,
-    closeExplicitly: false,
-    closeOnClickOutside: true,
-    maxWidth: "2xl",
-    paddingClasses: "pa-4 pa-sm-6",
-    panelClasses: "",
-    position: "center",
+    maxWidth: "lg",
+    closeExplicitly: true,
   },
   slideover: {
-    closeButton: true,
-    closeExplicitly: false,
-    closeOnClickOutside: true,
-    maxWidth: "md",
-    paddingClasses: "pa-4 pa-sm-6",
-    panelClasses: "",
-    position: "right",
+    position: "left",
   },
 });
-```
 
-Or update individual settings:
-
-```js
-putConfig("modal.maxWidth", "lg");
 putConfig("modal.closeButton", false);
 ```
 
+Keys you leave out keep their defaults. `resetConfig()` restores them. Use the configuration functions from this package rather than `@inertiaui/modal-vue`, so the defaults stay Vuetify classes instead of upstream's Tailwind classes.
+
 ## API Reference
 
-### Components
+### `<Modal>`
 
-#### `<Modal>`
+**Events:** `@close`, `@focus`, `@blur`, `@success`, `@after-leave`, plus any event emitted from the modal (for example `@user-created`).
 
-The main modal component that wraps your content.
+**Slot props and methods (via ref):** `close()`, `reload()`, `setOpen(open)`, `emit(event, ...args)`, `getParentModal()`, `getChildModal()`, `isOpen`, `onTopOfStack`, `config`, and the modal's page props.
 
-**Props:** See [Configuration](#configuration) section above.
+### `<ModalLink>`
 
-**Events:**
+The upstream `ModalLink`. Besides the modal props it accepts `href`, `method`, `data`, `headers`, `as`, `navigate`, `prefetch` and `cache-for`, and emits `@start`, `@success`, `@error`, `@close`, `@after-leave`, `@prefetching` and `@prefetched`.
 
-- `@close` - Emitted when modal is closed
-- `@focus` - Emitted when modal gains focus
-- `@blur` - Emitted when modal loses focus
-- `@success` - Emitted when modal is successfully opened
-- `@after-leave` - Emitted after modal is removed from DOM
+### Functions
 
-**Methods (via ref):**
+- `useModal()` - The current modal instance
+- `visitModal(url, options)` - Open a modal programmatically
+- `putConfig(key, value)`, `getConfig(key)`, `resetConfig()` - Default configuration
+- `getMaxWidth(token)`, `getDialogLocation(position)` - The width and location mapping this package uses
 
-- `close()` - Close the modal
-- `reload()` - Reload modal props
-- `setOpen(boolean)` - Set open state
-
-#### `<ModalLink>`
-
-A link component that opens routes in a modal.
-
-**Props:**
-
-- `href` (String, required) - The route to open
-- `method` (String) - HTTP method (default: `'get'`)
-- `data` (Object) - Data to send with request
-- `headers` (Object) - Additional headers
-- `prefetch` (Boolean/String/Array) - Prefetch the modal visit on hover, click, or mount
-- `cacheFor` (Number) - Prefetch cache lifetime in milliseconds
-- All modal configuration props
-
-**Events:**
-
-- `@start` - Emitted when request starts
-- `@success` - Emitted when modal opens successfully
-- `@error` - Emitted on error
-- `@close` - Emitted when modal closes
-- `@after-leave` - Emitted after modal is removed
-
-### Composable Functions
-
-#### `useModal()`
-
-Access modal context and methods in child components:
-
-```vue
-<script setup>
-import { useModal } from "@gigerit/inertia-modal-vuetify";
-
-const { close, reload, props, config } = useModal();
-</script>
-```
-
-#### `visitModal(url, options)`
-
-Programmatically open a modal:
-
-```js
-import { visitModal } from "@gigerit/inertia-modal-vuetify";
-
-visitModal("/users/create", {
-  method: "post",
-  data: { name: "John" },
-  config: {
-    maxWidth: "lg",
-  },
-  onClose: () => console.log("Closed"),
-});
-```
-
-### Configuration Functions
-
-- `getConfig(key)` - Get configuration value
-- `putConfig(key, value)` - Set configuration value
-- `resetConfig()` - Reset to defaults
+All other upstream exports (`Deferred`, `WhenVisible`, `HeadlessModal`, `useModalStack`, `prefetch`, ...) are re-exported unchanged.
 
 ## Styling
 
-This package uses Vuetify components, so all styling is handled through Vuetify's theming system. You can customize:
-
-- **Colors** - Use Vuetify theme colors
-- **Spacing** - Use Vuetify spacing utilities (`pa-4`, `ma-2`, etc.)
-- **Elevation** - Cards use Vuetify's elevation system
-- **Typography** - Inherits from your Vuetify theme
-
-### Custom Classes
-
-You can still apply custom classes via the `panel-classes` and `padding-classes` props:
+Modals use your Vuetify theme, so colors, elevation and typography follow it. Use `panel-classes` and `padding-classes` for Vuetify utility classes:
 
 ```vue
-<Modal panel-classes="bg-blue-grey-darken-1" padding-classes="pa-8">
-    <!-- Content -->
+<Modal panel-classes="bg-surface-variant" padding-classes="pa-8">
+  <!-- Content -->
 </Modal>
+```
+
+For further customization, target the `im-` classes: `im-modal-dialog`, `im-modal-wrapper`, `im-modal-content`, `im-slideover-dialog`, `im-slideover-left`, `im-slideover-wrapper`, `im-slideover-content` and `im-close-button`. Dialogs are teleported, so use global (unscoped) selectors.
+
+## Server-side rendering
+
+Vuetify components import their own CSS, so let Vite bundle this package and Vuetify for the SSR build, and pass `ssr: true` to Vuetify:
+
+```js
+// vite.config.js
+export default defineConfig({
+  ssr: {
+    noExternal: ["vuetify", "@gigerit/inertia-modal-vuetify"],
+  },
+});
+```
+
+```js
+// ssr.js
+createSSRApp({ render: renderApp(App, props) })
+  .use(plugin)
+  .use(createVuetify({ ssr: true }));
 ```
 
 ## Migration from @inertiaui/modal-vue
 
-This package is designed as a drop-in replacement. Simply:
-
-1. Replace the import:
+1. Replace the imports:
 
    ```js
    // Before
@@ -357,81 +261,24 @@ This package is designed as a drop-in replacement. Simply:
    import { Modal, ModalLink } from "@gigerit/inertia-modal-vuetify";
    ```
 
-2. Remove Tailwind CSS configuration (if not used elsewhere)
+2. Replace Tailwind classes in `padding-classes`, `panel-classes` and `putConfig` with Vuetify utility classes.
 
-3. Ensure Vuetify is installed and configured
-
-That's it! The API is identical, so no code changes are needed.
-
-## Example App
-
-An example application is included in the `example/` directory. To run it:
-
-```bash
-# Install dependencies
-bun install
-
-# Run the example
-bun run dev
-```
-
-Visit `http://localhost:3000` to see various modal examples in action.
-
-## Differences from @inertiaui/modal-vue
-
-The main differences are:
-
-1. **Styling** - Uses Vuetify components instead of Tailwind CSS
-2. **No Tailwind required** - Pure Vuetify styling
-3. **Vuetify theming** - Respects your Vuetify theme configuration
-4. **Material Design Icons** - Close button uses `mdi-close` icon
-
-All functionality, API, and behavior remain the same.
-
-## Browser Support
-
-Supports all browsers that Vuetify 4 supports. See [Vuetify Browser Support](https://vuetifyjs.com/en/getting-started/browser-support/).
-
-## Building
-
-To build the package locally:
-
-```bash
-npm run build
-```
-
-This will create the `dist/` directory with:
-
-- `inertia-modal-vuetify.es.js` - ES module build
-- `inertia-modal-vuetify.cjs.js` - CommonJS build
-- `index.d.ts` - TypeScript definitions
-
-The package is automatically built before publishing via the `prepublishOnly` script.
+3. Ensure Vuetify is installed and configured.
 
 ## Development
 
-To run the example app:
-
 ```bash
-npm run dev
+bun install
+bun run test           # Vitest suite
+bun run build          # Library build in dist/
+bun run dev            # Local-modal playground in example/ at http://localhost:3000
 ```
 
-This starts the Vite dev server for the example application.
+`demo-app/` is a Laravel 13 app for testing routed modals against the package source; see [AGENTS.md](AGENTS.md) for its commands.
 
 ## Contributing
 
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Commit using conventional commits (e.g., `feat: add new feature`)
-5. Push to your branch (`git push origin feature/amazing-feature`)
-6. Open a Pull Request
-
-### Commit Message Format
-
-This project uses [Conventional Commits](https://www.conventionalcommits.org/) for automated versioning:
+Contributions are welcome! Use [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, ...); release-please derives versions and the changelog from them.
 
 ## License
 
@@ -439,18 +286,6 @@ MIT
 
 ## Related Packages
 
-- [@inertiaui/modal-vue](https://github.com/inertiaui/modal) - Original Tailwind-styled version
-- [Inertia.js](https://inertiajs.com/) - The underlying framework
-- [Vuetify](https://vuetifyjs.com/) - The UI framework used for styling
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## Support
-
-For issues related to:
-
-- **Modal functionality** - See [@inertiaui/modal-vue documentation](https://inertiaui.com/modal)
-- **Vuetify styling** - See [Vuetify documentation](https://vuetifyjs.com/)
-- **This package** - Open an issue on GitHub
+- [@inertiaui/modal-vue](https://github.com/inertiaui/modal) - The upstream Tailwind-styled package
+- [Inertia.js](https://inertiajs.com/)
+- [Vuetify](https://vuetifyjs.com/)

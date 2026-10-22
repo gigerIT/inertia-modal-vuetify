@@ -1,96 +1,160 @@
 <script setup>
-import { ref, computed, provide } from "vue";
-import CloseButton from "./CloseButton.vue";
-import { getMaxWidth } from "./config.js";
+import { getConfig } from '@inertiaui/modal-vue'
+import { markAriaHidden, prefersReducedMotion } from '@inertiaui/vanilla'
+import { computed, onBeforeUnmount, onMounted, provide, ref, toRef, Transition, watch } from 'vue'
+import { useRtl } from 'vuetify'
+import { VCard } from 'vuetify/components/VCard'
+import { VDialog } from 'vuetify/components/VDialog'
+import CloseButton from './CloseButton.vue'
+import { getDialogLocation, getMaxWidth } from './config.js'
 
 const props = defineProps({
-  modalContext: {
-    type: Object,
-    required: true,
-  },
-  config: {
-    type: Object,
-    required: true,
-  },
-});
+    modalContext: {
+        type: Object,
+        required: true,
+    },
+    config: {
+        type: Object,
+        required: true,
+    },
+})
 
-// Provide modalContext to child components
-provide(
-  "modalContext",
-  computed(() => props.modalContext)
-);
+const emit = defineEmits(['after-leave'])
 
-const entered = ref(false);
+// Local modals have no ModalRenderer, so this is what lets their content call useModal().
+provide('modalContext', toRef(props, 'modalContext'))
 
-const maxWidthValue = computed(() => getMaxWidth(props.config.maxWidth));
+const { isRtl } = useRtl()
+const entered = ref(false)
+const type = computed(() => (props.config.slideover ? 'slideover' : 'modal'))
 
-const contentClasses = computed(() => {
-  const classes = [];
+const dialogProps = computed(() => {
+    const { maxWidth, position, slideover } = props.config
 
-  // Apply blur if not on top of stack
-  if (!props.modalContext.onTopOfStack) {
-    classes.push("blur-sm");
-  }
+    if (!slideover) {
+        return {
+            location: getDialogLocation(position),
+            maxWidth: getMaxWidth(maxWidth),
+            contentClass: 'im-modal-dialog',
+        }
+    }
 
-  return classes.join(" ");
-});
+    // Slideover sides are physical like upstream, while Vuetify locations follow the text direction.
+    const left = position === 'left'
 
-function handleEscapeKey(event) {
-  if (props.config?.closeExplicitly) {
-    event.preventDefault();
-  }
+    return {
+        location: left !== isRtl.value ? 'left' : 'right',
+        width: '100%',
+        maxWidth: getMaxWidth(maxWidth),
+        height: '100%',
+        maxHeight: '100%',
+        contentClass: ['im-slideover-dialog', { 'im-slideover-left': left }],
+        transition: slideTransition(left ? '-100%' : '100%'),
+    }
+})
+
+const contentStyle = computed(() => ({
+    margin: props.config.slideover ? 0 : undefined,
+    filter: props.modalContext.onTopOfStack ? undefined : 'blur(4px)',
+    transition: 'filter 0.3s',
+}))
+
+function slideTransition(offset) {
+    // Like Vuetify's own transitions, fade instead of moving when motion is reduced.
+    const hidden = () => (prefersReducedMotion() ? { opacity: 0 } : { transform: `translateX(${offset})` })
+
+    return {
+        component: Transition,
+        css: false,
+        onEnter: (el, done) => animate(el, [hidden(), {}], 225, 'cubic-bezier(0, 0, 0.2, 1)', done),
+        onLeave: (el, done) => animate(el, [{}, hidden()], 195, 'cubic-bezier(0.4, 0, 1, 1)', done),
+    }
 }
 
-function handleClickOutside(event) {
-  if (props.config?.closeExplicitly) {
-    event.preventDefault();
-  }
+function animate(el, keyframes, duration, easing, done) {
+    if (!el.animate) {
+        return done()
+    }
+
+    // Vue treats an argument passed to done() as a cancellation.
+    el.animate(keyframes, { duration, easing }).finished.then(
+        () => done(),
+        () => done(),
+    )
 }
+
+// v-dialog has no separate outside-click switch, so swallow the close that follows click:outside.
+let ignoreClose = false
+
+function onClickOutside() {
+    ignoreClose = !props.config.closeExplicitly && props.config.closeOnClickOutside === false
+}
+
+function onUpdateModelValue(open) {
+    if (!open && !ignoreClose) {
+        props.modalContext.close()
+    }
+
+    ignoreClose = false
+}
+
+function onAfterLeave() {
+    emit('after-leave')
+    props.modalContext.afterLeave()
+}
+
+let restoreAppElement = null
+let returnFocusTo = null
+
+function onOpenChange(open) {
+    if (open) {
+        restoreAppElement ??= markAriaHidden(getConfig('appElement'))
+        returnFocusTo ??= document.activeElement
+        return
+    }
+
+    entered.value = false
+    restoreAppElement?.()
+    returnFocusTo?.focus({ preventScroll: true })
+    restoreAppElement = returnFocusTo = null
+}
+
+onMounted(() => watch(() => props.modalContext.isOpen, onOpenChange, { immediate: true, flush: 'post' }))
+onBeforeUnmount(() => onOpenChange(false))
 </script>
 
 <template>
-  <Transition
-    appear
-    enter-active-class="transition-all duration-300 ease-in-out"
-    enter-from-class="opacity-0 translate-y-4 scale-95"
-    enter-to-class="opacity-100 translate-y-0 scale-100"
-    leave-active-class="transition-all duration-300 ease-in-out"
-    leave-from-class="opacity-100 translate-y-0 scale-100"
-    leave-to-class="opacity-0 translate-y-4 scale-95"
-    @after-enter="entered = true"
-    @after-leave="modalContext.afterLeave"
-  >
-    <v-card
-      v-show="entered || modalContext.isOpen"
-      class="im-modal-wrapper"
-      :class="contentClasses"
-      :max-width="maxWidthValue"
-      :elevation="2"
-      rounded
-      :data-inertiaui-modal-entered="entered"
-      @keydown.esc="handleEscapeKey"
-      style="transition: all 0.3s ease-in-out"
+    <VDialog
+        v-bind="dialogProps"
+        :model-value="modalContext.isOpen"
+        :persistent="config.closeExplicitly"
+        :scrim="modalContext.onTopOfStack"
+        :close-on-back="false"
+        :content-props="{ style: contentStyle }"
+        :aria-hidden="!modalContext.onTopOfStack || undefined"
+        :data-inertiaui-modal-id="modalContext.id"
+        :data-inertiaui-modal-index="modalContext.index"
+        @click:outside="onClickOutside"
+        @update:model-value="onUpdateModelValue"
+        @after-enter="entered = true"
+        @after-leave="onAfterLeave"
     >
-      <template v-if="config.closeButton !== false">
-        <div class="d-flex justify-end pa-2">
-          <CloseButton />
-        </div>
-      </template>
-      <div
-        class="im-modal-content"
-        :class="[
-          config.paddingClasses || 'pa-4 pa-sm-6',
-          config.panelClasses || '',
-        ]"
-      >
-        <slot :modal-context="modalContext" :config="config" />
-      </div>
-    </v-card>
-  </Transition>
-</template>
+        <VCard
+            :class="`im-${type}-wrapper`"
+            :rounded="config.slideover ? 0 : undefined"
+            :data-inertiaui-modal-entered="entered"
+        >
+            <div
+                v-if="config.closeButton !== false"
+                class="position-absolute top-0 pa-2"
+                style="inset-inline-end: 0; z-index: 1"
+            >
+                <CloseButton />
+            </div>
 
-<style scoped>
-.blur-sm {
-  filter: blur(4px);
-}
-</style>
+            <div :class="[`im-${type}-content`, config.paddingClasses, config.panelClasses]">
+                <slot />
+            </div>
+        </VCard>
+    </VDialog>
+</template>

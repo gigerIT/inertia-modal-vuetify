@@ -1,9 +1,8 @@
 # Dependencies
 node_modules
 
-# Build output (keep dist/index.d.ts)
-dist/*
-!dist/index.d.ts
+# Build output
+dist/
 
 # IDE
 .idea
