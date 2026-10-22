@@ -1,30 +1,11 @@
 # Example App
 
-This is an example application demonstrating the Inertia Modal Vuetify package.
-
-## Running the Example
-
-1. Install dependencies:
+A Vite playground for the adapter's presentation layer. It uses local modals,
+so it runs without a Laravel backend and imports the package from `../src`.
 
 ```bash
 bun install
-```
-
-2. Run the development server:
-
-```bash
 bun run dev
 ```
 
-3. Open your browser to `http://localhost:3000`
-
-## What's Included
-
-The example demonstrates:
-
-- **Basic Modal** - A simple modal dialog
-- **Slideover** - A drawer-style modal that slides in from the side
-- **Large Modal** - A modal with custom max-width (4xl)
-- **Form Modal** - A modal containing a form with validation
-
-Each example shows different features and configurations of the modal system.
+Open `http://localhost:3000`. Use `demo-app/` to test routed Inertia modals.
