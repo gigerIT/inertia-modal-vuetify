@@ -1,8 +1,8 @@
 import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
-import { defineConfig } from 'vite';
 import { resolve } from 'path';
+import { defineConfig } from 'vite';
 import vuetify from 'vite-plugin-vuetify';
 
 export default defineConfig({
@@ -28,8 +28,11 @@ export default defineConfig({
     resolve: {
         alias: {
             '@gigerit/inertia-modal-vuetify': resolve(__dirname, '../src/index.js'),
-            // Ensure @inertiaui/modal-vue resolves correctly when imported through our package
-            '@inertiaui/modal-vue': resolve(__dirname, 'node_modules/@inertiaui/modal-vue'),
         },
+        // The aliased adapter source lives outside this app; resolve its imports here to avoid duplicate runtimes.
+        dedupe: ['vue', 'vuetify', '@inertiajs/vue3', '@inertiaui/modal-vue', '@inertiaui/vanilla'],
+    },
+    ssr: {
+        noExternal: ['vuetify'],
     },
 });
