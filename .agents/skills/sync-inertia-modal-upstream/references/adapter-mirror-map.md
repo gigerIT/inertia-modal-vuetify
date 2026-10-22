@@ -1,85 +1,65 @@
-# Adapter Mirror Map
+# Mirror Map
 
-Upstream ships Vue components styled for its own stack. This package keeps the
-upstream API while rendering through Vuetify. When upstream changes behavior,
-inspect the upstream source and this adapter mirror.
+Where each upstream file lives in this package. Paths on the left are relative
+to the `inertiaui/modal` repository.
 
-## Upstream Runtime (External Dependency)
+## Protocol (Laravel package)
 
-These come from `@inertiaui/modal-vue` and are re-exported or consumed directly:
-
-| Upstream path | Adapter usage |
-| --- | --- |
-| `vue/src/HeadlessModal.vue` | `src/Modal.vue` slot contract and exposed methods |
-| `vue/src/modalStack.js` | stack, focus/blur, child/parent modal behavior |
-| `vue/src/useModal.js` | public composable re-export from `src/index.js` |
-| `vue/src/inertiauiModal.js` | `renderApp`, `visitModal`, config initialization re-exports |
-| `vue/src/config.js` | upstream defaults consumed by `HeadlessModal` |
-| `vue/src/Deferred.vue` | public re-export |
-| `vue/src/WhenVisible.vue` | public re-export |
-| `vue/src/ModalRoot.vue` / renderer | public root/rendering behavior re-export |
-| `vue/src/ModalLink.vue` | re-exported unchanged from `src/index.js` |
-
-Contract changes here usually require adapter source updates, package metadata
-updates, or docs changes. Do not copy these files into this repo.
-
-## Adapter-Local Mirrors (Diff On Every Sync)
-
-When upstream changes these areas, diff the upstream file against the adapter
-counterpart and port behavior intentionally.
-
-| Upstream | Adapter local | Notes |
+| Upstream | Defines | Local counterpart |
 | --- | --- | --- |
-| `vue/src/Modal.vue` | `src/Modal.vue` | Headless slot props, emitted events, exposed methods, stacking, scrim/backdrop, close behavior |
-| `vue/src/ModalContent.vue` | `src/ModalContent.vue` | centered modal transition, close button placement, classes, `afterLeave` timing |
-| `vue/src/SlideoverContent.vue` | `src/ModalContent.vue` (slideover branch) | left/right transitions, width, close button, overflow, `afterLeave` timing |
-| `vue/src/CloseButton.vue` | `src/CloseButton.vue` | injected context, close semantics, accessibility label |
-| `vue/src/config.js` | `src/config.js` | max width tokens, positions, default semantics |
-| `vue/src/index.js` or package exports | `src/index.js` | public re-exports and helper availability |
+| `src/Modal.php` | `X-InertiaUI-Modal` / `X-InertiaUI-Modal-Base-Url` headers, the `_inertiaui_modal` prop, the response shape, base-route rendering | `src/modalStack.ts`, `src/ModalRoot.vue`, `ModalResponseData` in `src/types.ts` |
+| `src/Redirector.php`, `src/helpers.php` | `back()` to the base URL | `src/ModalRoot.vue` closing logic |
+| `src/DispatchBaseUrlRequest.php` | rendering the base route for direct modal URLs | `src/ModalRoot.vue` |
+| `src/ModalVisit.php`, `src/ModalConfig.php`, `src/ModalType.php`, `src/ModalPosition.php` | PHP builders for visit options and config keys sent to the frontend | `VisitOptions` and `ModalTypeConfig` in `src/types.ts` |
 
-## Vuetify-Specific Contracts
+## Runtime (ported, same file names)
 
-Preserve these adapter behaviors unless intentionally changed:
+| Upstream | Local |
+| --- | --- |
+| `vue/src/modalStack.ts` | `src/modalStack.ts`; its types in `src/types.ts`; `renderApp`/`withInertiaModal` in `src/app.ts` |
+| `vue/src/inertiauiModal.ts` | exports in `src/index.ts`; `visitModal` in `src/modalStack.ts` |
+| `vue/src/ModalRoot.vue`, `ModalRenderer.vue`, `HeadlessModal.vue`, `ModalLink.vue`, `Deferred.vue`, `WhenVisible.vue`, `useModal.ts`, `cache.ts`, `helpers.ts` | same names in `src/` |
+| `vue/src/config.ts` | `src/config.ts` (Vuetify defaults, `fullscreen`, max-width and position helpers) |
+| `vue/tests/*.test.js` | `tests/unit/*.test.ts` |
+| `vue/package.json` dependencies | root `package.json` |
 
-- `v-dialog` uses upstream `isOpen` and `setOpen`.
-- `closeExplicitly` maps to `v-dialog` `persistent` (backdrop and Escape);
-  `closeOnClickOutside: false` swallows only the close after `click:outside`.
-  Browser back stays with upstream `ModalRoot` (`close-on-back` is `false`).
-- Only top modal has scrim; covered modals receive `aria-hidden`.
-- `modalContext.afterLeave` is called from actual Vue/Vuetify leave transition.
-- No package CSS: layout comes from `v-dialog` props and `content-props`
-  styles, and upstream's Tailwind class defaults are replaced in
-  `src/config.js`.
-- `false` remains meaningful for `closeButton`, `paddingClasses`, and
-  `panelClasses` semantics; do not collapse boolean/nullish behavior.
-- Public `im-` classes remain customization hooks.
+`@inertiaui/vanilla` stays an npm dependency: `src/helpers.ts` re-exports its
+helpers and `src/index.ts` exports it as `dialogUtils`.
 
-## Common Upstream Changes That Need Adapter Follow-Up
+## Presentation (behavior only)
 
-- New slot props or exposed methods in `HeadlessModal` -> update `src/Modal.vue`
-  and docs.
-- New events (`success`, `close`, `focus`, `blur`, etc.) -> update forwarding and
-  demos.
-- New close behavior or lifecycle timing -> check `v-dialog` props,
-  transitions, `afterLeave`, Escape/backdrop/browser-back behavior.
-- New stacked modal behavior -> check scrim, `aria-hidden`, z-index, focus/blur.
-- New config keys -> update adapter props, `src/config.js`, docs, examples, demo.
-- New `ModalLink` props/events -> pass through automatically; update docs and
-  `src/index.d.ts` if the re-export list changes.
-- New public exports -> update `src/index.js` and type/docs expectations.
-- New peer/runtime dependencies -> update root/demo metadata and Vite externals.
-- Upstream switch away from current source layout -> inspect package exports and
-  built files before editing adapter code.
+| Upstream | Local |
+| --- | --- |
+| `vue/src/Modal.vue` | `src/Modal.vue` (slot props, events, exposed methods) |
+| `vue/src/ModalContent.vue`, `vue/src/SlideoverContent.vue` | `src/ModalContent.vue` (one `v-dialog` for both) and `src/transitions.ts` |
+| `vue/src/CloseButton.vue` | `src/CloseButton.vue` |
+| `vue/src/constants.ts` | `getMaxWidth` in `src/config.ts` (pixel widths for the same tokens) |
 
-## Demo And Integration Touchpoints
+`src/ModalBtn.vue` and `src/keys.ts` have no upstream counterpart. The Vuetify
+contracts these files keep are the guardrails in `AGENTS.md`.
 
-Check these when backend shape, setup, or user-visible behavior changes:
+## Follow-Up For Common Upstream Changes
 
-- `example/App.vue` and `example/components/*.vue` (local modals)
-- `example/main.js`
-- `demo-app/resources/js/app.ts`
-- `demo-app/resources/js/ssr.ts`
-- `demo-app/resources/js/pages/**`
-- `demo-app/routes/web.php` (routed modals)
-- `demo-app/tests/Feature/ModalRoutesTest.php`
-- `tests/Modal.test.js` (adapter lifecycle contracts)
+- Config key: `ModalTypeConfig` in `src/types.ts`, defaults in
+  `src/config.ts`, `modalPropNames`, props on `src/ModalLink.vue` and
+  `src/HeadlessModal.vue`, the Vuetify rendering in `src/ModalContent.vue`,
+  README props table, `docs/configuration.md`.
+- Slot prop, event, or exposed method of `HeadlessModal`: pass it through
+  `src/Modal.vue`, type it in `src/types.ts`, document it in the README.
+- `ModalLink` prop or event: `src/ModalLink.vue`; `ModalBtn` forwards attrs,
+  so only its docs change.
+- Export: `src/index.ts` and the README API section.
+- Protocol: `src/modalStack.ts`, `src/ModalRoot.vue`, `src/types.ts`, a demo
+  route, and an e2e test.
+- Dependency: root and demo `package.json`, Vite externals, demo
+  `resolve.dedupe`.
+
+## Integration Touchpoints
+
+- `tests/browser/*.test.ts` - lifecycle and layout in real Vuetify dialogs.
+- `demo-app/routes/web.php`, `demo-app/resources/js/pages/**` - routed modals.
+- `demo-app/tests/e2e/modals.spec.ts` - routed flows against the Laravel
+  package.
+- `demo-app/tests/Feature/ModalRoutesTest.php` - demo routes.
+- `demo-app/resources/js/app.ts`, `ssr.ts` - app and SSR setup.
+- `example/App.vue`, `example/components/*.vue` - local modals.

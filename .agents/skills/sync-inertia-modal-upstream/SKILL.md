@@ -1,180 +1,118 @@
 ---
 name: sync-inertia-modal-upstream
-description: Use when syncing this Vuetify adapter with upstream inertiaui/modal or @inertiaui/modal-vue, comparing upstream commits/releases, updating package metadata, lockfiles, adapter compatibility, dist artifacts, docs, demo/example apps, or the root upstream tracker.
+description: Use when checking upstream inertiaui/modal (the Laravel package or @inertiaui/modal-vue) for new commits or releases, porting its fixes, features, or wire-protocol changes into this package's runtime, or updating UPSTREAM.md.
 ---
 
 # Sync Inertia Modal Upstream
 
 ## Overview
 
-Synchronize this adapter with the upstream InertiaUI Modal Vue package without
-losing local Vuetify adapter contracts. Upstream owns modal routing, stack,
-lifecycle, local modals, deferred props, and headless behavior; this repo adapts
-the presentation layer to Vuetify.
+`src/` owns a TypeScript port of `@inertiaui/modal-vue`'s runtime and talks to
+the `inertiaui/modal` Laravel package over its wire protocol. Syncing means
+reviewing every upstream commit since the one recorded in `UPSTREAM.md` and
+porting what applies: protocol changes always, runtime fixes and features by
+decision, Tailwind presentation only as behavior. Nothing is installed from
+upstream except `@inertiaui/vanilla`.
 
 ## Required Reading
 
-1. `AGENTS.md` - dependency rules, build commands, core contracts.
-2. Repo-root `UPSTREAM.md` if present - previous synced baseline.
-3. `references/dependency-sync-procedure.md` - exact dependency update flow.
-4. `references/adapter-mirror-map.md` - upstream files to diff against adapter files.
-5. `references/upgrade-checklist.md` - verification and metadata gates.
-6. `references/upstream-tracker-template.md` - create/update `UPSTREAM.md` after success.
-
-## Architecture To Preserve
-
-- Upstream repo: `https://github.com/inertiaui/modal.git`.
-- Upstream package: `@inertiaui/modal-vue`.
-- Root package publishes `@gigerit/inertia-modal-vuetify`.
-- Root build keeps Vue, Vuetify, Inertia, and `@inertiaui/modal-vue` external.
-- This adapter does not vendor upstream source. Sync by upgrading dependency
-  constraints/lockfiles and porting only needed Vuetify presentation changes.
-- `src/index.js` re-exports upstream helpers and exports adapter components.
-- `src/Modal.vue` wraps upstream `HeadlessModal` with Vuetify `v-dialog`.
-- `src/ModalContent.vue` (modal and slideover) and `src/CloseButton.vue`
-  replace upstream Tailwind presentation with Vuetify components.
-- `ModalLink` is re-exported from upstream unchanged.
-- `src/index.d.ts` declares the public types; keep it in sync with exports.
+1. `AGENTS.md` - guardrails (wire protocol, public API, Vuetify contracts).
+2. `UPSTREAM.md` - synced commit and the divergences to keep.
+3. `references/adapter-mirror-map.md` - upstream file -> local file.
+4. `references/upgrade-checklist.md` - gap checks, verification, metadata.
+5. `references/upstream-tracker-template.md` - `UPSTREAM.md` format.
 
 ## Workflow
 
-### 1. Capture baseline
+### 1. Resolve the range
 
 ```sh
 git status --short --branch
-git remote -v
-```
-
-Read:
-
-- repo-root `UPSTREAM.md` if present
-- root `package.json`, `bun.lock`, `vite.config.js`
-- `src/index.js`, `src/Modal.vue`, content components, and `src/config.js`
-- `example/**` package/demo files
-- `demo-app/package.json`, lockfile, `vite.config.ts`, Composer files
-
-Preserve unrelated dirty files.
-
-### 2. Resolve upstream target
-
-- Default repo: `https://github.com/inertiaui/modal.git`
-- Default branch: upstream `HEAD` (currently `3.x`; there is no `main`)
-- Default package: `@inertiaui/modal-vue`
-- If the user supplied a version, tag, branch, or commit, use that exact target.
-- Otherwise compare installed package/lockfile version to latest npm package and
-  upstream `HEAD`.
-
-Inspect delta before editing:
-
-```sh
 git ls-remote --symref https://github.com/inertiaui/modal.git HEAD
-npm view @inertiaui/modal-vue version dist-tags repository --json
+gh release list -R inertiaui/modal --limit 5
+npm view @inertiaui/modal-vue version
 ```
 
-Use a temporary clone or `git show` outside this repo for upstream diffs. Do not
-turn any dependency folder into a nested git repo.
-
-### 3. Refresh dependency and lockfiles
-
-Follow `references/dependency-sync-procedure.md`.
-
-Update only required package constraints and lockfiles. Keep:
-
-- root `@inertiaui/modal-vue` as a runtime dependency, not bundled source
-- root Vite external for `@inertiaui/modal-vue`
-- root peer dependency ranges aligned with real runtime requirements
-- demo app alias for local adapter source
-- demo app upstream modal resolution free of duplicate Inertia/modal runtimes
-
-### 4. Assess upstream Vue features and port adapter changes
-
-Use `references/adapter-mirror-map.md` to decide what needs manual porting.
-
-Before implementing, explicitly report upstream Vue frontend changes that look
-like new user-facing features or expanded public behavior. For each feature,
-state whether the Vuetify adapter should implement it now, defer it, or skip it.
-
-If a feature should be implemented in the Vuetify adapter, create a focused
-adaptation plan before editing adapter code. Cover:
-
-- upstream source files and behavior to mirror
-- affected adapter files
-- public API, slots, emits, styling, classes, accessibility, transitions, and docs
-- root/example/demo package metadata impact
-- build, demo, browser smoke, and generated `dist` impact
-- rollout risks and compatibility notes
-
-Prefer edits in:
-
-- `src/`
-- `docs/`
-- `example/`
-- `demo-app/`
-- root/demo package metadata and lockfiles
-
-Do not reimplement upstream modal routing, stack, local modal registration,
-deferred props, or lifecycle behavior locally unless upstream explicitly removed
-the hook this adapter depends on and the user approves the design.
-
-### 5. Regenerate and verify
-
-Minimum root verification:
+The range starts at `UPSTREAM.md`'s synced commit and ends at the user's
+target, or upstream `HEAD` (branch `3.x`; there is no `main`). Clone outside
+the repo:
 
 ```sh
-bun run build
+TMP="$(mktemp -d)"
+git clone https://github.com/inertiaui/modal.git "$TMP/modal"
+git -C "$TMP/modal" checkout <target>
+git -C "$TMP/modal" log --oneline <synced>..<target>
+git -C "$TMP/modal" diff --stat <synced>..<target>
 ```
 
-Then run relevant commands from `references/upgrade-checklist.md`, especially
-when package metadata, UI behavior, or demos changed.
+### 2. Triage every commit
 
-Inspect:
+Classify each commit in the range with the mirror map:
 
-- `bun list --all | rg '@inertiaui/modal-vue|@inertiajs/vue3|vue@|vuetify'`
-- `npm pack --dry-run --json`
-- generated `dist/**` when build output is part of the requested sync
+- **Protocol** - Laravel `src/*.php`: headers, the `_inertiaui_modal` prop,
+  the modal response shape, redirects. Port: the demo runs the Laravel package
+  at the target version, so a missed change breaks it.
+- **Runtime** - ported `vue/src` files. Port unless a divergence in
+  `UPSTREAM.md` already covers it.
+- **Presentation** - upstream's Tailwind components. Port the behavior into
+  the Vuetify components; skip class and markup changes.
+- **Docs** - adapt to `docs/` when the behavior exists here.
+- **Other** - React, CI, upstream demo: skip.
 
-### 6. Update tracker and docs
+Report new user-facing features to the user with a decision each (port now,
+defer, skip) and the reason before porting them. The step is done when every
+commit in the range has a class and a decision.
 
-After verification passes:
+### 3. Port
 
-- Create or update repo-root `UPSTREAM.md` from
-  `references/upstream-tracker-template.md`.
-- Update docs when consumer-visible setup, props, slots, emits, styling hooks, or
-  troubleshooting changed.
-- Update `AGENTS.md` only for durable repo rules.
-- Update upgrade notes only for breaking consumer migration decisions.
-
-### 7. Final review
+For each ported change, diff the upstream file and apply it to the local file
+of the same name, in TypeScript and local style:
 
 ```sh
-git diff --check
-git status --short --branch
+git -C "$TMP/modal" diff <synced>..<target> -- vue/src/modalStack.ts
 ```
 
-Report:
+- Keep every divergence listed in `UPSTREAM.md`. When upstream fixes one the
+  same way, take upstream's code and drop the divergence entry.
+- Port upstream's tests for the change (`vue/tests/*.test.js` ->
+  `tests/unit/*.test.ts`) and check that each fails without the port.
+- New config keys, slot props, events, exports, or `ModalLink` props follow
+  the follow-up list in the mirror map.
+- Protocol changes need a demo route and an e2e test in
+  `demo-app/tests/e2e/modals.spec.ts`.
 
-- upstream target synced
-- adapter files changed and why
-- verification commands run and results
-- residual risk or follow-up work
+### 4. Refresh dependencies
+
+- Match `@inertiaui/vanilla` to the range upstream's `vue/package.json`
+  requires, in root `package.json` and `demo-app/package.json`.
+- Raise `@inertiajs/*` and `vue` peer minimums only to what ported code needs.
+- Move the demo to the target Laravel package:
+  `cd demo-app && composer require inertiaui/modal:<version>`.
+- Run `bun install` at the root and `npm install` in `demo-app`.
+
+### 5. Verify
+
+Run the verification commands and smoke tests in
+`references/upgrade-checklist.md`. The step is done when every command passes
+or the failure is reported.
+
+### 6. Record
+
+- Update `UPSTREAM.md` from `references/upstream-tracker-template.md`:
+  synced commit, ported changes, the divergence list, residual risk.
+- Update `README.md` and `docs/` for consumer-visible changes, and `AGENTS.md`
+  for durable rules.
+- Upstream bugs found while porting: ask the user before reporting them to
+  `inertiaui/modal`.
+
+Report the synced range, each commit's decision, files changed, verification
+results, and residual risk.
 
 ## Stop Conditions
 
-- If a bug/gap is in a `gigerit`-owned dependency and blocks the task, follow the
-  repository dependency rule: do not workaround in the consuming project unless
-  the user explicitly approves.
-- If unrelated dirty files overlap with required edits, preserve them and make the
+- A protocol change without enough context to port it: stop and report the
+  commit and the open decision.
+- Unrelated dirty files overlap required edits: preserve them and make the
   smallest compatible change.
-- If upstream introduces breaking contracts without enough context, stop and
-  report exact missing decision points.
-- If duplicate Vue, Inertia, Vuetify, or modal runtimes appear after install,
-  fix dependency metadata/resolution before claiming the sync complete.
-
-## Quick Reference
-
-| Topic | Reference |
-| --- | --- |
-| Dependency update commands and lockfiles | `references/dependency-sync-procedure.md` |
-| Upstream file -> adapter file mapping | `references/adapter-mirror-map.md` |
-| Verification, metadata, docs | `references/upgrade-checklist.md` |
-| `UPSTREAM.md` format | `references/upstream-tracker-template.md` |
+- Duplicate Vue, Vuetify, or Inertia runtimes after install: fix the metadata
+  or demo dedupe before claiming the sync complete.

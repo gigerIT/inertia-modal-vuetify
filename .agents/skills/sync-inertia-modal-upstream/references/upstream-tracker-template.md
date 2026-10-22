@@ -1,54 +1,42 @@
 # UPSTREAM.md Template
 
-Create or update repo-root `UPSTREAM.md` only after verification passes. Copy
-this template and replace placeholders.
+Update repo-root `UPSTREAM.md` after verification passes. Keep the
+Divergences section current: it is the list the next sync must preserve.
 
 ```markdown
 # Upstream Tracker
 
-Last verified sync for this adapter against `inertiaui/modal`.
+<one paragraph: what src/ is ported from, which Laravel package it talks to,
+and the sync-inertia-modal-upstream skill>
 
 ## Source
 
 - Repository: https://github.com/inertiaui/modal.git
 - Branch: <upstream default branch, e.g. 3.x>
-- Synced commit: `<full-sha-or-tag>`
+- Synced commit: `<full sha>`
 - Synced commit title: `<subject line>`
 - Synced at: `<YYYY-MM-DD>`
+- Matches release: `<inertiaui/modal and @inertiaui/modal-vue version>`
 
-## Upstream Vue Package
+## Divergences
 
-- Package: `@inertiaui/modal-vue`
-- Version: `<package version>`
-- Install source: npm package / Composer-linked package / other: `<note>`
+Every intended difference from upstream's Vue runtime, with the upstream
+issue or PR when there is one. Remove an entry once upstream matches it.
 
-## Adapter Changes Required
+- <runtime fixes and behavior changes>
+- <presentation: Vuetify instead of Tailwind, local-only features>
 
-- `<bullet list of adapter files/behavior updated for this sync>`
-- `<or "none - dependency/metadata-only sync">`
+## Last Sync
 
-## Demo And Docs Changes
-
-- `<short note or "none">`
+- Ported: <commits or areas ported, or "none">
+- Skipped: <commits and reasons>
 
 ## Verification
 
-- [ ] `bun run test`
-- [ ] `bun run build`
-- [ ] `bun run build:example`
-- [ ] `cd demo-app && npm run build`
-- [ ] `cd demo-app && npm run build:ssr`
-- [ ] `cd demo-app && npm run format:check`
-- [ ] `cd demo-app && npm run typecheck`
-- [ ] `cd demo-app && composer run test`
-- [ ] `bun list --all | rg '@inertiaui/modal-vue|@inertiajs/vue3|vue@|vuetify'`
-- [ ] `npm pack --dry-run --json`
-- [ ] Manual smoke completed when UI behavior changed
+- [ ] Commands in the skill's `references/upgrade-checklist.md`
+- [ ] Manual smoke when behavior changed
 
 ## Residual Risk
 
-- `<untested areas or follow-up work>`
+- <untested areas, unreported upstream bugs, follow-up work>
 ```
-
-Keep `UPSTREAM.md` factual and short. Do not duplicate full upgrade checklists
-here; link to this skill's `references/upgrade-checklist.md` instead.

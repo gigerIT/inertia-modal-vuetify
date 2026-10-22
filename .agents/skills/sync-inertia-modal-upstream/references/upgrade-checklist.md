@@ -1,143 +1,71 @@
-# Upstream Upgrade Checklist
+# Upgrade Checklist
 
-Use with `references/dependency-sync-procedure.md` for install/update commands
-and `references/adapter-mirror-map.md` for file-level follow-up.
+Gap checks, metadata checks, and verification for a sync. File locations are
+in `adapter-mirror-map.md`.
 
-## Commit And Release Discovery
+## Gap Checks
 
-```sh
-git ls-remote --symref https://github.com/inertiaui/modal.git HEAD
-npm view @inertiaui/modal-vue version dist-tags repository --json
-```
+- Did the Laravel package change a header, the `_inertiaui_modal` prop, the
+  response shape, redirects, or base-route rendering?
+- Did `HeadlessModal` slot props, exposed methods, events, or watchers change?
+- Did stack, local modal, nested modal, deferred prop, prefetch, reload, or
+  visit behavior change?
+- Did close behavior change for Escape, backdrop, browser back, redirects, or
+  `closeExplicitly`?
+- Did config keys, defaults, or accepted values change?
+- Did `ModalLink` gain props, events, or prefetch options?
+- Did upstream add ARIA, focus, or transition behavior consumers may expect?
+- Did upstream fix something listed as a divergence in `UPSTREAM.md`?
+- Did `vue/package.json` change `@inertiaui/vanilla`, Inertia, or Vue ranges?
 
-If upstream is cloned temporarily:
+## Metadata Checks
 
-```sh
-git -C "$TMP/modal" diff --stat <previous-upstream-commit>..<target-upstream-commit>
-git -C "$TMP/modal" diff --name-status <previous-upstream-commit>..<target-upstream-commit>
-git -C "$TMP/modal" log --oneline <previous-upstream-commit>..<target-upstream-commit>
-```
-
-Read upstream release notes, docs, and changelog for the same range when present.
-
-## Upstream Files To Inspect
-
-Priority files:
-
-- `vue/package.json`
-- `vue/src/HeadlessModal.vue`
-- `vue/src/Modal.vue`
-- `vue/src/ModalContent.vue`
-- `vue/src/SlideoverContent.vue`
-- `vue/src/CloseButton.vue`
-- `vue/src/ModalLink.vue`
-- `vue/src/config.js`
-- `vue/src/inertiauiModal.js`
-- `vue/src/modalStack.js`
-- `vue/src/useModal.js`
-- `vue/src/ModalRoot.vue`
-- `vue/src/ModalRenderer.vue`
-- `vue/src/Deferred.vue`
-- `vue/src/WhenVisible.vue`
-- root package metadata, Composer metadata, docs, and changelog
-
-If package source paths differ, inspect installed `node_modules/@inertiaui/modal-vue`
-and package exports to find equivalent files.
-
-## Adapter Gap Checks
-
-- Does upstream add a frontend feature or public behavior that the Vuetify adapter
-  should expose?
-- For each new upstream Vue frontend feature, report one decision to the user:
-  implement now, defer, or skip. Include reason.
-- If implementing a feature, create an adaptation plan before code edits:
-  upstream behavior, adapter files, API/slots/emits/classes/accessibility,
-  docs, tests, demo/browser verification, `dist`, and compatibility risks.
-- Did `HeadlessModal` slot props, exposed methods, event names, or watcher
-  behavior change?
-- Did stack, local modal, nested modal, deferred prop, reload, or visit behavior
-  change?
-- Did close behavior change for Escape, backdrop, browser back, or explicit close?
-- Did modal/slideover config defaults or accepted values change?
-- Did upstream add CSS classes, ARIA behavior, focus handling, or transition
-  timing that consumers may expect?
-- Did `ModalLink` add props/events/options that must pass through?
-- Did upstream change peer minimums for Vue, Inertia, Axios, Reka UI, or related
-  runtime dependencies?
-
-## Dependency And Metadata Checks
-
-- Root `package.json` dependency on `@inertiaui/modal-vue` matches target.
-- Root `peerDependencies` match real minimums required by upstream and Vuetify.
-- `@inertiaui/modal-vue` remains in root `dependencies`, not `peerDependencies`
-  only.
-- `vite.config.js` continues to externalize `vue`, `vuetify`, `@inertiajs/vue3`,
-  and `@inertiaui/modal-vue`.
-- Demo app dependency versions align with root expectations.
-- Demo Vite aliases avoid duplicate runtime instances.
-- Lockfiles do not install duplicate Vue/Inertia/modal runtimes.
-- Package exports still expose `dist` build and `./src` source entry as intended.
-- `src/index.js` re-exports all supported upstream helpers and adapter helpers.
+- `@inertiaui/vanilla` matches upstream's range in root and demo
+  `package.json`.
+- No `@inertiaui/modal-vue` in any `package.json` or lockfile.
+- `vite.config.ts` keeps `vue`, `vuetify`, `@inertiajs/*`, and
+  `@inertiaui/vanilla` external.
+- Demo `resolve.dedupe` covers the same packages, and lockfiles hold one copy
+  of each runtime.
+- `src/index.ts` exports every upstream export name.
 
 ## Verification Commands
 
-Run smallest relevant commands first, then expand for release-facing changes:
-
 ```sh
+bun run lint
+bun run format:check
+bun run typecheck
 bun run test
 bun run build
 bun run build:example
-cd demo-app && npm run build
-cd demo-app && npm run build:ssr
-cd demo-app && npm run format:check
-cd demo-app && npm run typecheck
-cd demo-app && composer run test
-bun list --all | rg '@inertiaui/modal-vue|@inertiajs/vue3|vue@|vuetify'
 npm pack --dry-run --json
 git diff --check
+cd demo-app
+npm run lint:test
+npm run format:check
+npm run typecheck
+npm run build
+npm run build:ssr
+composer run test
+npm run test:e2e
 ```
 
-When UI/lifecycle behavior changed, manually smoke:
+## Manual Smoke
 
-- basic modal open/close
-- backdrop close
-- Escape close
-- `closeExplicitly`
-- browser back close behavior
-- left and right slideovers
-- nested/stacked modals
-- scrim and `aria-hidden`
-- focus/blur events
-- `success` and `close` events
-- reload/deferred props if upstream touched them
-- SSR demo build if setup or rendering changed
+When behavior changed, check in the demo app:
 
-## Package Artifact Checks
+- open and close through the close button, Escape, and the backdrop
+- `closeExplicitly` and `before-close`
+- navigate mode with browser back
+- slideovers (left, right) and the bottom sheet
+- nested modals: scrim, `aria-hidden`, focus/blur, events to the parent
+- a form that redirects back closes the modal
+- deferred props, reload, and prefetching
+- a direct modal URL with SSR
 
-- `dist/inertia-modal-vuetify.js` (ESM only, no CSS) builds without bundling
-  duplicate Vue, Vuetify, Inertia, or upstream modal runtimes.
-- `src/index.d.ts` remains accurate when public exports changed; the demo
-  `npm run typecheck` exercises it.
-- `npm pack --dry-run --json` includes expected publish files only.
-- Example and demo still resolve the local adapter source for development.
+## Release Notes
 
-## Docs And Tracker
-
-Update docs when any of these change:
-
-- install requirements
-- public API, props, slots, emits, exposed methods
-- styling classes or customization hooks
-- modal/slideover config
-- SSR setup
-- troubleshooting or common mistakes
-
-Update repo-root `UPSTREAM.md` after verification passes. Use
-`references/upstream-tracker-template.md`.
-
-## Release And Version Notes
-
-- Adapter semver is independent from upstream `@inertiaui/modal-vue`.
-- Release Please owns adapter version bumps/changelog unless the user explicitly
-  requests a release task.
-- Record upstream version/commit and adapter impact in `UPSTREAM.md`.
+- Package semver is independent of upstream; Release Please owns versions and
+  the changelog.
+- Consumer-visible behavior changes from a port need a Conventional Commit
+  type that reaches the changelog (`feat`, `fix`, or `!`).
