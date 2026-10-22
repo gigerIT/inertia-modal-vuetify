@@ -1,6 +1,6 @@
 # Example App
 
-A Vite playground for the adapter's presentation layer. It uses local modals,
+A Vite playground for the package's Vuetify components. It uses local modals,
 so it runs without a Laravel backend and imports the package from `../src`.
 
 ```bash

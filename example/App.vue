@@ -1,7 +1,6 @@
-<script setup>
+<script setup lang="ts">
 import { useTheme } from 'vuetify'
-import { VBtn } from 'vuetify/components/VBtn'
-import { Modal, ModalLink } from '../src/index.js'
+import { Modal, ModalBtn } from '../src'
 import ContactForm from './components/ContactForm.vue'
 
 const theme = useTheme()
@@ -13,7 +12,10 @@ const links = [
     { label: '4xl', href: '#modal', maxWidth: '4xl' },
     { label: 'Slideover', href: '#modal', slideover: true },
     { label: 'Slideover left', href: '#modal', slideover: true, position: 'left' },
-    { label: 'Close explicitly', href: '#form', closeExplicitly: true },
+    { label: 'Bottom sheet', href: '#modal', slideover: true, position: 'bottom' },
+    { label: 'Card layout', href: '#card' },
+    { label: 'Unsaved changes', href: '#contact' },
+    { label: 'Close explicitly', href: '#modal', closeExplicitly: true },
     { label: 'No outside close', href: '#modal', closeOnClickOutside: false },
     { label: 'Long content', href: '#long' },
     { label: 'Nested', href: '#nested' },
@@ -31,14 +33,12 @@ const links = [
                 </div>
 
                 <div class="d-flex flex-wrap ga-3">
-                    <ModalLink v-for="{ label, ...link } in links" :key="label" v-bind="link" :as="VBtn">
-                        {{ label }}
-                    </ModalLink>
+                    <ModalBtn v-for="{ label, ...link } in links" :key="label" v-bind="link">{{ label }}</ModalBtn>
                 </div>
             </v-container>
         </v-main>
 
-        <Modal name="modal" v-slot="{ close }">
+        <Modal v-slot="{ close }" name="modal">
             <h2 class="text-h6 mb-2">Hello</h2>
             <p>This content is rendered inside a Vuetify dialog.</p>
             <div class="d-flex justify-end mt-4">
@@ -46,18 +46,23 @@ const links = [
             </div>
         </Modal>
 
-        <Modal name="form">
-            <ContactForm />
+        <Modal name="card" title="Card layout">
+            <p v-for="n in 30" :key="n" class="mb-2">Paragraph {{ n }}</p>
+
+            <template #actions="{ close }">
+                <v-btn color="primary" @click="close">Done</v-btn>
+            </template>
         </Modal>
+
+        <ContactForm />
 
         <Modal name="long">
             <h2 class="text-h6 mb-2">Long content</h2>
             <p v-for="n in 40" :key="n" class="mb-2">Paragraph {{ n }}</p>
         </Modal>
 
-        <Modal name="nested">
-            <h2 class="text-h6 mb-4">Parent</h2>
-            <ModalLink href="#modal" :as="VBtn" color="primary">Open child</ModalLink>
+        <Modal name="nested" title="Parent">
+            <ModalBtn href="#modal" color="primary">Open child</ModalBtn>
         </Modal>
     </v-app>
 </template>

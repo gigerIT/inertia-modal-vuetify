@@ -1,23 +1,34 @@
-<script setup>
-import { ref } from 'vue'
-import { useModal } from '../../src/index.js'
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import { Modal } from '../../src'
 
-const modal = useModal()
-const valid = ref(false)
-const required = [(value) => !!value || 'Required']
+const name = ref('')
+const message = ref('')
+const dirty = computed(() => !!(name.value || message.value))
+const required = [(value: string) => !!value || 'Required']
+
+function confirmDiscard() {
+    return !dirty.value || confirm('Discard your message?')
+}
+
+function reset() {
+    name.value = ''
+    message.value = ''
+}
 </script>
 
 <template>
-    <h2 class="text-h6 mb-4">Contact</h2>
+    <Modal name="contact" title="Contact" :before-close="confirmDiscard" @after-leave="reset">
+        <template #default="{ close }">
+            <v-form id="contact-form" @submit.prevent="close">
+                <v-text-field v-model="name" label="Name" :rules="required" />
+                <v-textarea v-model="message" label="Message" rows="3" />
+            </v-form>
+        </template>
 
-    <v-form v-model="valid" @submit.prevent="modal.close()">
-        <v-text-field label="Name" :rules="required" />
-        <v-text-field label="Email" type="email" :rules="required" />
-        <v-textarea label="Message" rows="3" />
-
-        <div class="d-flex justify-end ga-2">
-            <v-btn variant="text" @click="modal.close()">Cancel</v-btn>
-            <v-btn type="submit" color="primary" :disabled="!valid">Send</v-btn>
-        </div>
-    </v-form>
+        <template #actions="{ requestClose }">
+            <v-btn variant="text" @click="requestClose">Cancel</v-btn>
+            <v-btn type="submit" form="contact-form" color="primary">Send</v-btn>
+        </template>
+    </Modal>
 </template>
