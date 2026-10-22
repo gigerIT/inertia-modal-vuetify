@@ -258,6 +258,9 @@ dependencies itself.
   navigate mode with back, nested stacks and their events, deferred props,
   reloads, prefetching, direct modal URLs, fullscreen, and SSR (with
   `E2E_SSR=1`).
+- An open modal sets `aria-hidden` on `#app`, and Playwright role queries skip
+  hidden elements. Wait for the dialog, then query base-page elements with
+  `includeHidden: true`; checking them first races the modal opening.
 - Demo Laravel tests run through `composer run test`; they cover the demo's
   modal routes, not package behavior.
 - For visual changes, check modal, slideover, bottom sheet, card layout, and

@@ -132,8 +132,9 @@ test('restores the URL after closing a prefetched modal in navigate mode', async
 test('renders a modal URL on top of its base route', async ({ page }) => {
     await page.goto('/profile');
 
-    await expect(page.getByRole('link', { name: 'Slideover', exact: true })).toBeAttached();
     await expect(dialog(page)).toHaveAccessibleName('Profile');
+    await expect(page.locator('#app')).toHaveAttribute('aria-hidden', 'true');
+    await expect(page.getByRole('link', { name: 'Slideover', exact: true, includeHidden: true })).toBeAttached();
 });
 
 test('opens modals fullscreen on phones', async ({ page }) => {
