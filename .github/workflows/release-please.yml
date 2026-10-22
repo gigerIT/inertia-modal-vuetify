@@ -60,11 +60,16 @@ jobs:
         run: bun run build
 
       - name: Run tests
-        run: bun run test
-
-      - name: Publish to npm
         run: |
-          npm publish --access public
+          bunx playwright install --with-deps chromium-headless-shell
+          bun run test
+
+      # npm can only bind a trusted publisher to an existing package, so the first publish of
+      # @inertia-vuetify/modal needs NPM_TOKEN. Drop it here and in publish-tag afterwards.
+      - name: Publish to npm
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
@@ -109,7 +114,9 @@ jobs:
         run: bun run build
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v3

@@ -19,6 +19,10 @@ jobs:
       - uses: oven-sh/setup-bun@v2
 
       - run: bun install --frozen-lockfile
+      - run: bunx playwright install --with-deps chromium-headless-shell
+      - run: bun run lint
+      - run: bun run format:check
+      - run: bun run typecheck
       - run: bun run test
       - run: bun run build
       - run: bun run build:example
@@ -41,11 +45,12 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
 
-      # The demo type-checks against ../src/index.d.ts, whose imports resolve from the root install.
+      # The demo type-checks the adapter source, whose imports resolve from the root install.
       - run: bun install --frozen-lockfile
         working-directory: .
       - run: composer install --no-interaction --no-progress
       - run: cp .env.example .env && php artisan key:generate
+      - run: touch database/database.sqlite && php artisan migrate --force
       - run: npm ci
       - run: npm run lint:test
       - run: npx eslint .
@@ -53,3 +58,8 @@ jobs:
       - run: npm run typecheck
       - run: npm run build:ssr
       - run: composer run test
+      - run: npx playwright install --with-deps chromium-headless-shell
+      - run: php artisan inertia:start-ssr &
+      - run: npm run test:e2e
+        env:
+          E2E_SSR: "1"
