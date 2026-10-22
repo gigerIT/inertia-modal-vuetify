@@ -1,0 +1,23 @@
+{
+    "$schema": "./node_modules/oxfmt/configuration_schema.json",
+    "printWidth": 140,
+    "semi": false,
+    "singleQuote": true,
+    "tabWidth": 4,
+    "trailingComma": "all",
+    "endOfLine": "lf",
+    "sortPackageJson": false,
+    "ignorePatterns": [
+        "*.md",
+        "*.yml",
+        "*.yaml",
+        "package.json",
+        "**/dist/**",
+        "**/node_modules/**",
+        "demo-app/**",
+        "_bmad/**",
+        "_bmad-output/**",
+        ".agents/**",
+        "bun.lock"
+    ]
+}

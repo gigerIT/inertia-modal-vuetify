@@ -4,7 +4,7 @@
     "packages": {
         ".": {
             "release-type": "node",
-            "package-name": "@gigerit/inertia-modal-vuetify",
+            "package-name": "@inertia-vuetify/modal",
             "changelog-sections": [
                 {
                     "type": "feat",

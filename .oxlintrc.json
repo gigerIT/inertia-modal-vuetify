@@ -1,0 +1,18 @@
+{
+    "$schema": "./node_modules/oxlint/configuration_schema.json",
+    "plugins": ["typescript", "vue", "unicorn", "import"],
+    "env": {
+        "builtin": true,
+        "browser": true,
+        "es2024": true
+    },
+    "ignorePatterns": ["**/dist/**", "**/node_modules/**", "demo-app/**", "_bmad/**", ".agents/**"],
+    "categories": {
+        "correctness": "error",
+        "suspicious": "warn"
+    },
+    "rules": {
+        "import/no-unassigned-import": "off",
+        "no-underscore-dangle": "off"
+    }
+}

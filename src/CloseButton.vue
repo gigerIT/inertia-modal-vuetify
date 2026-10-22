@@ -1,20 +1,13 @@
-<script setup>
-import { inject, toValue } from 'vue'
+<script setup lang="ts">
+import { inject } from 'vue'
 import { useLocale } from 'vuetify'
 import { VBtn } from 'vuetify/components/VBtn'
+import { requestCloseKey } from './keys'
 
-// Resolved on click: the provided context can change while this button stays mounted.
-const modalContext = inject('modalContext', null)
+const requestClose = inject(requestCloseKey)
 const { t } = useLocale()
 </script>
 
 <template>
-    <VBtn
-        class="im-close-button"
-        icon="$close"
-        variant="text"
-        size="small"
-        :aria-label="t('$vuetify.close')"
-        @click="toValue(modalContext)?.close()"
-    />
+    <VBtn class="im-close-button" icon="$close" variant="text" size="small" :aria-label="t('$vuetify.close')" @click="requestClose?.()" />
 </template>
