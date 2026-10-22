@@ -98,6 +98,13 @@ npm run format:check
 npm run format
 ```
 
+Demo ESLint configuration regression tests:
+
+```sh
+cd demo-app
+npm run lint:test
+```
+
 Demo app Pest/PHPUnit tests:
 
 ```sh
@@ -123,7 +130,8 @@ composer run test
 - Preserve consumer-facing `im-` CSS classes as public customization hooks.
 - Demo TypeScript is strict in `demo-app/tsconfig.json`; package source is not
   TypeScript.
-- Demo ESLint uses Vue essential, Vue TypeScript recommended, and Prettier.
+- Demo ESLint uses Vue essential, TypeScript ESLint recommended, the Vue parser,
+  and Prettier. `npm run lint:test` checks Vue/TypeScript parsing and lint rules.
 - Demo Prettier config lives at `demo-app/.prettierrc`.
 - Commit messages should use Conventional Commits (`feat:`, `fix:`, `docs:`,
   `refactor:`, `test:`, `chore:`); Release Please maps these to changelog
