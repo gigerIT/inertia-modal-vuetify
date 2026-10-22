@@ -1,5 +1,34 @@
 # Changelog
 
+## [3.0.0](https://github.com/gigerIT/inertia-modal-vuetify/compare/v2.1.0...v3.0.0) (2026-10-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* requires vuetify ^4.2.0. Package is ESM-only; the CommonJS build could not be required anyway. max-width tokens use upstream's Tailwind widths (2xl 672px, md 448px). The modal close button overlays the top-right corner instead of taking its own row.
+
+### Features
+
+* rebuild Vuetify presentation layer ([24fd501](https://github.com/gigerIT/inertia-modal-vuetify/commit/24fd5017d5cd015ca5aeda678802e8f1f12da027))
+
+
+### Bug Fixes
+
+* **deps:** refresh compatible frontend security graphs ([9a4f841](https://github.com/gigerIT/inertia-modal-vuetify/commit/9a4f841eff08f311c078c1fbe568de81d300e368))
+* **deps:** refresh frontend dependency graphs ([07def39](https://github.com/gigerIT/inertia-modal-vuetify/commit/07def395c8ca4241a2173dc29c1a65b18c8dbbe2))
+
+
+### Documentation
+
+* **agents:** sync agent guidance with rebuilt adapter ([f4b6b0b](https://github.com/gigerIT/inertia-modal-vuetify/commit/f4b6b0be3d9b8c4889233d23b689733968735831))
+* drop React examples and document Vuetify setup ([bc8bccd](https://github.com/gigerIT/inertia-modal-vuetify/commit/bc8bccdded1cedf8aaf78f8e515bfd32cb26b30c))
+
+
+### Miscellaneous Chores
+
+* **demo-app:** upgrade to Laravel 13 and Inertia 3 ([95428fe](https://github.com/gigerIT/inertia-modal-vuetify/commit/95428fee63be6d1e86f60502bf49b73f8982e409))
+* **example:** rebuild as local modal playground ([3abc920](https://github.com/gigerIT/inertia-modal-vuetify/commit/3abc92010629d4becaae53ba0a0924b97e4a21c5))
+
 ## [2.1.0](https://github.com/gigerIT/inertia-modal-vuetify/compare/v2.0.0...v2.1.0) (2026-07-02)
 
 
