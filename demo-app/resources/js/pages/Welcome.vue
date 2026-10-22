@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { Modal, ModalLink } from '@gigerit/inertia-modal-vuetify';
+import { Modal, ModalBtn } from '@inertia-vuetify/modal';
 import { useTheme } from 'vuetify';
-import { VBtn } from 'vuetify/components';
 
 const theme = useTheme();
 
@@ -11,11 +10,15 @@ const links = [
     { label: 'Bottom', href: '/profile', position: 'bottom' },
     { label: 'Slideover', href: '/profile', slideover: true },
     { label: 'Slideover left', href: '/profile', slideover: true, position: 'left' },
+    { label: 'Bottom sheet', href: '/profile', slideover: true, position: 'bottom' },
     { label: 'Close explicitly', href: '/profile', closeExplicitly: true },
     { label: 'No outside close', href: '/profile', closeOnClickOutside: false },
     { label: 'Navigate', href: '/profile', navigate: true },
+    { label: 'Prefetched', href: '/profile', prefetch: true },
+    { label: 'Prefetched navigate', href: '/profile', prefetch: true, navigate: true },
     { label: 'Nested', href: '/nested' },
     { label: 'Long content', href: '/long' },
+    { label: 'Stats', href: '/stats' },
     { label: 'Local', href: '#local' },
 ];
 </script>
@@ -31,19 +34,17 @@ const links = [
         <v-main>
             <v-container style="min-height: 200vh">
                 <div class="d-flex flex-wrap ga-3">
-                    <ModalLink v-for="{ label, ...link } in links" :key="label" v-bind="link" :as="VBtn">
-                        {{ label }}
-                    </ModalLink>
+                    <ModalBtn v-for="{ label, ...link } in links" :key="label" v-bind="link">{{ label }}</ModalBtn>
                 </div>
             </v-container>
         </v-main>
 
-        <Modal name="local" v-slot="{ close }">
-            <h2 class="text-h6 mb-2">Local</h2>
+        <Modal name="local" title="Local">
             <p>Rendered without a route.</p>
-            <div class="d-flex justify-end mt-4">
+
+            <template #actions="{ close }">
                 <v-btn color="primary" @click="close">Done</v-btn>
-            </div>
+            </template>
         </Modal>
     </v-app>
 </template>

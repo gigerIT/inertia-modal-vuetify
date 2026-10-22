@@ -10,10 +10,12 @@
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
         "lint:test": "node --test tests/frontend/eslint-config.test.mjs",
+        "test:e2e": "playwright test",
         "typecheck": "vue-tsc --noEmit"
     },
     "devDependencies": {
         "@laravel/vite-plugin-wayfinder": "^0.1.11",
+        "@playwright/test": "^1.64.1",
         "@types/node": "^22.20.5",
         "eslint": "^10.13.0",
         "eslint-config-prettier": "^10.1.8",
@@ -26,7 +28,6 @@
     },
     "dependencies": {
         "@inertiajs/vue3": "^3.9.1",
-        "@inertiaui/modal-vue": "^3.1.2",
         "@inertiaui/vanilla": "^1.5.0",
         "@mdi/font": "^7.4.47",
         "@vitejs/plugin-vue": "^6.0.10",

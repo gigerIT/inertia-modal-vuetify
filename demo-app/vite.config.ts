@@ -27,10 +27,10 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@gigerit/inertia-modal-vuetify': resolve(__dirname, '../src/index.js'),
+            '@inertia-vuetify/modal': resolve(__dirname, '../src/index.ts'),
         },
         // The aliased adapter source lives outside this app; resolve its imports here to avoid duplicate runtimes.
-        dedupe: ['vue', 'vuetify', '@inertiajs/vue3', '@inertiaui/modal-vue', '@inertiaui/vanilla'],
+        dedupe: ['vue', 'vuetify', '@inertiajs/core', '@inertiajs/vue3', '@inertiaui/vanilla'],
     },
     ssr: {
         noExternal: ['vuetify'],

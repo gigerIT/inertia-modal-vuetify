@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import { Modal, ModalLink } from '@gigerit/inertia-modal-vuetify';
-import { VBtn } from 'vuetify/components';
+import { Modal, ModalBtn } from '@inertia-vuetify/modal';
+import { ref } from 'vue';
+
+const picked = ref<string>();
 </script>
 
 <template>
-    <Modal>
-        <h2 class="text-h6 mb-4">Nested</h2>
-        <ModalLink href="/profile" :as="VBtn" color="primary">Open profile</ModalLink>
+    <Modal title="Nested">
+        <div class="d-flex ga-2">
+            <ModalBtn href="/profile" color="primary">Open profile</ModalBtn>
+            <ModalBtn href="/pick" @picked="(color: string) => (picked = color)">Pick a color</ModalBtn>
+        </div>
+
+        <p v-if="picked" class="mt-4">Picked {{ picked }}</p>
     </Modal>
 </template>

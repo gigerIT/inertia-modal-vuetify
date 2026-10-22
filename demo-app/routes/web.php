@@ -22,4 +22,15 @@ Route::put('/profile', function (Request $request) {
 
 Route::get('/nested', fn () => Inertia::modal('Nested')->baseRoute('home'))->name('nested');
 
+Route::get('/pick', fn () => Inertia::modal('Pick')->baseRoute('home'))->name('pick');
+
+Route::get('/stats', fn () => Inertia::modal('Stats', [
+    'time' => now()->format('H:i:s.u'),
+    'visits' => Inertia::defer(function () {
+        usleep(1_000_000);
+
+        return 42;
+    }),
+])->baseRoute('home'))->name('stats');
+
 Route::get('/long', fn () => Inertia::modal('Long')->baseRoute('home'))->name('long');

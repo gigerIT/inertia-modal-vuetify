@@ -1,7 +1,7 @@
 import '@mdi/font/css/materialdesignicons.css';
 import 'vuetify/styles';
 
-import { renderApp } from '@gigerit/inertia-modal-vuetify';
+import { renderApp } from '@inertia-vuetify/modal';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import type { DefineComponent } from 'vue';

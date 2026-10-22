@@ -1,4 +1,4 @@
-import { renderApp } from '@gigerit/inertia-modal-vuetify';
+import { renderApp } from '@inertia-vuetify/modal';
 import { createInertiaApp } from '@inertiajs/vue3';
 import createServer from '@inertiajs/vue3/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';

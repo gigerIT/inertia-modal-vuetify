@@ -1,24 +1,28 @@
 <script setup lang="ts">
-import { Modal } from '@gigerit/inertia-modal-vuetify';
+import { Modal } from '@inertia-vuetify/modal';
 import { useForm } from '@inertiajs/vue3';
 
 const props = defineProps<{ name: string; bio: string }>();
 
 const form = useForm({ name: props.name, bio: props.bio });
+
+function confirmDiscard() {
+    return !form.isDirty || confirm('Discard your changes?');
+}
 </script>
 
 <template>
-    <Modal v-slot="{ close }">
-        <h2 class="text-h6 mb-4">Profile</h2>
+    <Modal title="Profile" :before-close="confirmDiscard">
+        <template #default>
+            <v-form id="profile-form" @submit.prevent="form.put('/profile')">
+                <v-text-field v-model="form.name" label="Name" :error-messages="form.errors.name" />
+                <v-textarea v-model="form.bio" label="Bio" rows="3" :error-messages="form.errors.bio" />
+            </v-form>
+        </template>
 
-        <v-form @submit.prevent="form.put('/profile', { onSuccess: () => close() })">
-            <v-text-field v-model="form.name" label="Name" :error-messages="form.errors.name" />
-            <v-textarea v-model="form.bio" label="Bio" rows="3" :error-messages="form.errors.bio" />
-
-            <div class="d-flex justify-end ga-2">
-                <v-btn variant="text" @click="close">Cancel</v-btn>
-                <v-btn type="submit" color="primary" :loading="form.processing">Save</v-btn>
-            </div>
-        </v-form>
+        <template #actions="{ requestClose }">
+            <v-btn variant="text" @click="requestClose">Cancel</v-btn>
+            <v-btn type="submit" form="profile-form" color="primary" :loading="form.processing">Save</v-btn>
+        </template>
     </Modal>
 </template>
