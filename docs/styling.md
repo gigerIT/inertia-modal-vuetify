@@ -4,11 +4,14 @@ A fair bit of styling can be adjusted using the [configuration](/configuration) 
 
 ## Available Classes
 
+Vuetify teleports dialogs out of your component tree, so target these classes from global (unscoped) styles.
+
 You're probably the fastest if you just inspect the modal in your browser and see which classes are used. To give you a head start, here are the classes that are used: all classes are prefixed with `im-` to avoid conflicts with other classes.
 
 | Class | Description |
 | --- | --- |
 | `im-close-button` | The close button |
+| `im-modal-dialog` | The teleported Vuetify dialog content wrapper for centered modals |
 | `im-modal-wrapper` | The Vuetify card wrapper for centered modals |
 | `im-modal-content` | The actual modal content |
 | `im-slideover-dialog` | The teleported Vuetify dialog content wrapper for slideovers |

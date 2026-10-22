@@ -19,9 +19,7 @@ Inertia::modal('Invoice/Overview', [
 
 In your modal template, you may use the `WhenVisible` component to load a prop only when the component is in the viewport. This works exactly the same as Inertia's [built-in component](https://inertiajs.com/load-when-visible). In modals, you should import this component from the Modal package instead of the Inertia package.
 
-::: code-group
-
-```vue [Vue]
+```vue
 <script setup>
 import { WhenVisible } from '@inertiajs/vue3' // [!code --]
 import { WhenVisible, Modal } from '@gigerit/inertia-modal-vuetify'
@@ -53,33 +51,5 @@ const activeTab = ref('invoice')
     </Modal>
 </template>
 ```
-
-```jsx [React]
-import { WhenVisible } from '@inertiajs/react' // [!code --]
-import { WhenVisible, Modal } from '@inertiaui/modal-react'
-import { useState } from 'react'
-
-export default function Overview({ invoice, customer }) {
-    const [activeTab, setActiveTab] = useState('invoice')
-
-    return (
-        <Modal>
-            <h1>Invoice {invoice.id}</h1>
-
-            {/* Tabs for switching between Invoice and Customer details */}
-
-            <div className={activeTab !== 'customer' ? 'hidden' : ''}>
-                <h2>Customer Details</h2>
-
-                <WhenVisible data="customer" fallback={<p>Loading customer...</p>}>
-                    <CustomerComponent customer={customer} />
-                </WhenVisible>
-            </div>
-        </Modal>
-    )
-}
-```
-
-:::
 
 Please check out the [WhenVisible](https://inertiajs.com/load-when-visible) documentation for more information on how to use this component.

@@ -19,9 +19,7 @@ Inertia::modal('Invoice/Overview', [
 
 In your modal template, you can use the `Deferred` component to render the deferred props. However, instead of importing the component from the Inertia package, you should import the component from the Modal package.
 
-::: code-group
-
-```vue [Vue]
+```vue
 <script setup>
 import { Deferred } from '@inertiajs/vue3' // [!code --]
 import { Deferred, Modal } from '@gigerit/inertia-modal-vuetify'
@@ -44,24 +42,5 @@ defineProps({
     </Modal>
 </template>
 ```
-
-```jsx [React]
-import { Deferred } from '@inertiajs/react' // [!code --]
-import { Deferred, Modal } from '@inertiaui/modal-react'
-
-export default function Overview({ invoice, lines }) {
-    return (
-        <Modal>
-            <h1>Invoice {invoice.id}</h1>
-
-            <Deferred data="lines" fallback={<p>Loading invoice lines...</p>}>
-                <InvoiceLinesComponent lines={lines} />
-            </Deferred>
-        </Modal>
-    );
-}
-```
-
-:::
 
 Please check out the [Deferred Props](https://inertiajs.com/deferred-props) documentation for more information on how to use the `Deferred` component.

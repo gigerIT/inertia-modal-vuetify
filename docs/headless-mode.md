@@ -24,9 +24,7 @@ The `Headless` component provides the following props:
 
 Here is an example of how to use the `HeadlessModal` component:
 
-::: code-group
-
-```vue [Vue]
+```vue
 <script setup>
 import { HeadlessModal } from '@gigerit/inertia-modal-vuetify'
 import { ref } from 'vue'
@@ -61,39 +59,3 @@ function closeModal() {
     </HeadlessModal>
 </template>
 ```
-
-```jsx [React]
-import { HeadlessModal } from '@inertiaui/modal-react'
-import { useRef } from 'react'
-
-export default function UserEdit({ ...props }) {
-    const modalRef = useRef(null)
-
-    function closeModal() {
-        modalRef.current.close()
-    }
-
-    return (
-        <HeadlessModal ref={modalRef} {...props}>
-            {({ afterLeave,
-                close,
-                config,
-                emit,
-                getChildModal,
-                getParentModal,
-                id,
-                index,
-                modalContext,
-                onTopOfStack,
-                isOpen,
-                reload,
-                setOpen
-            }) => (
-                {/* Your custom modal here */ }
-            )}
-        </HeadlessModal>
-    )
-}
-```
-
-:::

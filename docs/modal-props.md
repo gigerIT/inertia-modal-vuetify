@@ -11,9 +11,7 @@ return Inertia::render('EditUser', [
 
 Then, in your modal component, you can access these props:
 
-::: code-group
-
-```vue [Vue]
+```vue
 <script setup>
 defineProps({ roles: Object, user: Object })
 </script>
@@ -28,28 +26,11 @@ defineProps({ roles: Object, user: Object })
 </template>
 ```
 
-```jsx [React]
-export default function EditUser({ roles, user }) {
-    return (
-        <div>
-            <h1>Edit User {user.name}</h1>
-            <form>
-                {/* ... */}
-            </form>
-        </div>
-    )
-}
-```
-
-:::
-
 ## Accessing Props using `useModal`
 
 If you're using child components within your modal, you can pass props to them, but you can also access the modal's props using the `useModal` hook. This is useful when you need to access the modal's props in a child component that is not directly receiving them as props.
 
-::: code-group
-
-```vue [Vue]
+```vue
 <script setup>
 import { useModal } from '@gigerit/inertia-modal-vuetify'
 
@@ -60,17 +41,3 @@ const { props } = useModal()
     <p>User Status: {{ props.user.status }}</p>
 </template>
 ```
-
-```jsx [React]
-import { useModal } from '@inertiaui/modal-react'
-
-export default function EditUser() {
-    const { props } = useModal()
-
-    return (
-        <p>User Status: {props.user.status}</p>
-    )
-}
-```
-
-:::

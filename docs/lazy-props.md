@@ -13,9 +13,7 @@ Inertia::modal('Team', [
 
 Then in the frontend, you can use the `reload` method to load the lazy prop. For a deeper dive into how reload works, check out the [Reload Props](/reload-props) documentation.
 
-::: code-group
-
-```vue [Vue]
+```vue
 <script setup>
 defineProps(['team', 'members']);
 </script>
@@ -32,27 +30,3 @@ defineProps(['team', 'members']);
     </Modal>
 </template>
 ```
-
-```jsx [React]
-export default function Team({ team, members }) {
-    return (
-        <Modal>
-            {({ reload }) => (
-                <>
-                    <button onClick={() => reload({ only: ['members'] })}>
-                        Show members
-                    </button>
-
-                    {members?.length > 0 && (
-                        <div>
-                            {/* Display members here */}
-                        </div>
-                    )}
-                </>
-            )}
-        </Modal>
-    );
-}
-```
-
-:::

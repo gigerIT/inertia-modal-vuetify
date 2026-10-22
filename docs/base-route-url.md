@@ -37,9 +37,7 @@ Just like the regular `route()` method, the `baseRoute()` method accepts an arra
 
 Next, the frontend needs to know that we're using the browser history to navigate between modals. To do this, you need to add the `navigate` attribute to the `ModalLink` component. Alternatively, you can configure this globally, but first, let's see how to do it on a per-link basis:
 
-::: code-group
-
-```vue [Vue]
+```vue
 <template>
     <ModalLink navigate href="/users/create">
         Create User
@@ -47,35 +45,14 @@ Next, the frontend needs to know that we're using the browser history to navigat
 </template>
 ```
 
-```jsx [React]
-export default function UserIndex() {
-    return (
-        <ModalLink navigate={true} href="/users/create">
-            Create User
-        </ModalLink>
-    );
-}
-```
-
-:::
-
 ### Configure Globally
 
 Instead of adding the `navigate` attribute to each `ModalLink` component, you can configure this globally in your main `app.js` file. Just like the other [configuration options](/configuration#default-configuration), you can use the `putConfig` function to set the `navigate` option to `true`:
 
-::: code-group
-
-```js [Vue]
+```js
 import { putConfig } from '@gigerit/inertia-modal-vuetify'
 putConfig('navigate', true)
 ```
-
-```js [React]
-import { putConfig } from '@inertiaui/modal-react'
-putConfig('navigate', true)
-```
-
-:::
 
 
 ## Redirector

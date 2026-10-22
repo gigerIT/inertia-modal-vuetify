@@ -10,9 +10,7 @@ The following props can be used on both the `ModalLink` and `Modal` components. 
 
 The `close-button` prop allows you to show or hide the close button in the modal. By default, the close button is shown. To render a custom close button, you can check out the [Close Modal](/close-modal) section.
 
-::: code-group
-
-```vue [Vue]
+```vue
 <template>
     <ModalLink href="/users/create" :close-button="false">
         Create User
@@ -20,43 +18,17 @@ The `close-button` prop allows you to show or hide the close button in the modal
 </template>
 ```
 
-```jsx [React]
-export default function UserIndex() {
-    return (
-        <ModalLink href="/users/create" closeButton={false}>
-            Create User
-        </ModalLink>
-    );
-}
-```
-
-:::
-
 ### `close-explicitly`
 
 The `close-explicitly` prop allows you to close the modal explicitly. By default, the modal closes when the user clicks outside of the modal or presses the `Esc` key. If you set `close-explicitly` to `true`, the modal will only close when you press the close button or close it programmatically.
 
-::: code-group
-
-```vue [Vue]
+```vue
 <template>
     <ModalLink href="/users/create" :close-explicitly="true">
         Create User
     </ModalLink>
 </template>
 ```
-
-```jsx [React]
-export default function UserIndex() {
-    return (
-        <ModalLink href="/users/create" closeExplicitly={true}>
-            Create User
-        </ModalLink>
-    );
-}
-```
-
-:::
 
 ### `close-on-click-outside`
 
@@ -72,11 +44,9 @@ The `close-on-click-outside` prop controls whether clicking the backdrop closes 
 
 ### `max-width`
 
-The `max-width` lets you specify the maximum width of the modal. For modals, the default value is `2xl`, and for slideover, the default value is `md`. These values keep upstream token compatibility and are mapped to Vuetify pixel widths. Valid values are `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, and `7xl`.
+The `max-width` lets you specify the maximum width of the modal. For modals, the default value is `2xl`, and for slideover, the default value is `md`. These are upstream's Tailwind tokens, mapped to the same widths: `sm` 384px, `md` 448px, `lg` 512px, `xl` 576px, `2xl` 672px, `3xl` 768px, `4xl` 896px, `5xl` 1024px, `6xl` 1152px, and `7xl` 1280px. Unknown values fall back to `2xl`.
 
-::: code-group
-
-```vue [Vue]
+```vue
 <template>
     <ModalLink href="/users/create" max-width="lg">
         Create User
@@ -84,25 +54,11 @@ The `max-width` lets you specify the maximum width of the modal. For modals, the
 </template>
 ```
 
-```jsx [React]
-export default function UserIndex() {
-    return (
-        <ModalLink href="/users/create" maxWidth="lg">
-            Create User
-        </ModalLink>
-    );
-}
-```
-
-:::
-
 ### `padding-classes`
 
-The `padding-classes` prop allows you to add custom padding classes to the modal. This is useful if you want to add extra padding to the modal content or if you want to remove the default padding. The default classes are `pa-4 pa-sm-6`.
+The `padding-classes` prop allows you to add custom padding classes to the modal. This is useful if you want to add extra padding to the modal content or if you want to remove the default padding. The default classes are `pa-4 pa-sm-6`; pass `false` to remove the padding.
 
-::: code-group
-
-```vue [Vue]
+```vue
 <template>
     <ModalLink href="/users/create" padding-classes="pa-8">
         Create User
@@ -110,27 +66,13 @@ The `padding-classes` prop allows you to add custom padding classes to the modal
 </template>
 ```
 
-```jsx [React]
-export default function UserIndex() {
-    return (
-        <ModalLink href="/users/create" paddingClasses="p-8">
-            Create User
-        </ModalLink>
-    );
-}
-```
-
-:::
-
 ### `panel-classes`
 
 The `panel-classes` prop allows you to add custom classes to the panel of the modal. This is useful if you want to add extra styles to the modal panel, such as a border or shadow. The default panel class is empty because Vuetify `v-card` provides the base panel styling.
 
 These classes are merged with the padding classes. They are separated by a different prop to allow for more flexibility.
 
-::: code-group
-
-```vue [Vue]
+```vue
 <template>
     <ModalLink href="/users/create" panel-classes="bg-blue-grey-lighten-5">
         Create User
@@ -138,25 +80,11 @@ These classes are merged with the padding classes. They are separated by a diffe
 </template>
 ```
 
-```jsx [React]
-export default function UserIndex() {
-    return (
-        <ModalLink href="/users/create" panelClasses="bg-blue-50 rounded-lg">
-            Create User
-        </ModalLink>
-    );
-}
-```
-
-:::
-
 ### `position`
 
 The `position` prop allows you to specify the position of the modal. The default value is `center` for modals and `right` for slideover. Valid values for modals are `bottom`, `center`, and `top`. Valid values for slideover are `left` and `right`.
 
-::: code-group
-
-```vue [Vue]
+```vue
 <template>
     <ModalLink href="/users/create" position="top">
         Create User
@@ -164,25 +92,11 @@ The `position` prop allows you to specify the position of the modal. The default
 </template>
 ```
 
-```jsx [React]
-export default function UserIndex() {
-    return (
-        <ModalLink href="/users/create" position="top">
-            Create User
-        </ModalLink>
-    );
-}
-```
-
-:::
-
 ### `slideover`
 
 The `slideover` prop allows you to open the modal as a slideover instead of a modal. The default value is `false`. When you add the `slideover` prop, the modal will open as a slideover.
 
-::: code-group
-
-```vue [Vue]
+```vue
 <template>
     <ModalLink href="/users/create" slideover>
         Create User
@@ -190,33 +104,13 @@ The `slideover` prop allows you to open the modal as a slideover instead of a mo
 </template>
 ```
 
-```jsx [React]
-export default function UserIndex() {
-    return (
-        <ModalLink href="/users/create" slideover>
-            Create User
-        </ModalLink>
-    );
-}
-```
-
-:::
-
 ## Default configuration
 
 You can set the default configuration for all modals and slideovers by importing the `putConfig` function from the package, for example, in your `app.js` file.
 
-::: code-group
-
-```js [Vue]
+```js
 import { putConfig } from '@gigerit/inertia-modal-vuetify'
 ```
-
-```js [React]
-import { putConfig } from '@inertiaui/modal-react'
-```
-
-:::
 
 You can call the `putConfig` function with an object containing the configuration that you want to set as the default. Here is an example with the default configuration. Note that there are separate keys for modals and slideovers.
 
@@ -245,7 +139,7 @@ putConfig({
 })
 ```
 
-Instead of passing a whole object, you can also pass just the keys that you want to override. The other values will be taken from the default configuration.
+Instead of passing a whole object, you can also pass just the keys that you want to override. The other values will be taken from the default configuration. Import `putConfig` from this package rather than `@inertiaui/modal-vue`, so omitted class keys keep their Vuetify defaults instead of upstream's Tailwind classes.
 
 ```js
 putConfig({

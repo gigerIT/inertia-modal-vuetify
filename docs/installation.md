@@ -24,11 +24,13 @@ Inertia Modal requires a *root*-component to be mounted in your app. You can do 
 import { createApp } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
 import { renderApp } from '@gigerit/inertia-modal-vuetify'
+import { createVuetify } from 'vuetify'
 
 createInertiaApp({
     setup({ el, App, props, plugin }) {
-        return createApp({ render: renderApp(App, props) })
+        createApp({ render: renderApp(App, props) })
             .use(plugin)
+            .use(createVuetify())
             .mount(el)
     }
 })
@@ -38,4 +40,22 @@ If you need more refined control over the mounting process, you should check out
 
 ## Vuetify Configuration
 
-This adapter renders with Vuetify components, so no Tailwind content path is required. Make sure Vuetify and your icon font are installed and configured in your Vue app.
+This adapter renders with Vuetify components, so no Tailwind setup or stylesheet import is required. The close button uses Vuetify's `$close` icon alias and `$vuetify.close` locale message, so it follows your configured icon set and language.
+
+For server-side rendering, let Vite bundle Vuetify and this package and pass `ssr: true` to Vuetify:
+
+```js
+// vite.config.js
+export default defineConfig({
+    ssr: {
+        noExternal: ['vuetify', '@gigerit/inertia-modal-vuetify'],
+    },
+})
+```
+
+```js
+// ssr.js
+createSSRApp({ render: renderApp(App, props) })
+    .use(plugin)
+    .use(createVuetify({ ssr: true }))
+```
