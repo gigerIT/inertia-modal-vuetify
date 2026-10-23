@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.1](https://github.com/inertia-vuetify/modal/compare/v3.0.0...v3.0.1) (2026-10-23)
+
+
+### Bug Fixes
+
+* render ModalBtn text and icon props without a slot ([efab753](https://github.com/inertia-vuetify/modal/commit/efab753dac783a6827d421aa0c0e5ba8e4ef5636))
+* render ModalBtn text and icon props without a slot ([bcb028d](https://github.com/inertia-vuetify/modal/commit/bcb028d94a6b3d74c22cbfbf01168679d28fbf20)), closes [#12](https://github.com/inertia-vuetify/modal/issues/12)
+
 ## [3.0.0](https://github.com/inertia-vuetify/modal/compare/v2.1.0...v3.0.0) (2026-10-22)
 
 
