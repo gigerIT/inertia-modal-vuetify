@@ -13,16 +13,9 @@ const loading = ref(false)
 </script>
 
 <template>
-    <ModalLink
-        v-slot="slotProps"
-        v-bind="$attrs"
-        :as="VBtn"
-        :href
-        :loading
-        @start="loading = true"
-        @success="loading = false"
-        @error="loading = false"
-    >
-        <slot v-bind="slotProps" />
+    <ModalLink v-bind="$attrs" :as="VBtn" :href :loading @start="loading = true" @success="loading = false" @error="loading = false">
+        <template v-if="$slots.default" #default="slotProps">
+            <slot v-bind="slotProps" />
+        </template>
     </ModalLink>
 </template>

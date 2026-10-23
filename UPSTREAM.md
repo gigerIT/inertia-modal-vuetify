@@ -32,6 +32,8 @@ Runtime:
 - `renderApp` types its props as `Record<string, any>` (inertiaui/modal#289).
 - `ModalInstance.reload()` returns a promise.
 - `ModalLink` leaves Ctrl/Cmd/Shift/Alt-clicks on links to the browser.
+- `ModalLink` passes a default slot to `as` only when it has one; an empty
+  slot hides `v-btn`'s `text` and `icon` props.
 - `HeadlessModal`'s exposed `modalContext` returns the modal instance;
   upstream's returns `undefined`.
 - `WhenVisible`'s error names `WhenVisible` instead of `Deferred`.

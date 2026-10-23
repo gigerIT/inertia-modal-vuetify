@@ -184,6 +184,8 @@ function handle(event: MouseEvent) {
         @mouseleave="onMouseleave"
         @mousedown="onMousedown"
     >
-        <slot :loading />
+        <template v-if="$slots.default" #default>
+            <slot :loading />
+        </template>
     </component>
 </template>
