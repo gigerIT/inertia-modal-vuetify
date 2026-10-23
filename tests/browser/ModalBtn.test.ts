@@ -7,8 +7,8 @@ import { mountModals, reset, stack } from './helpers'
 beforeEach(reset)
 afterEach(reset)
 
-function mountButton(href: string) {
-    mountModals([{ name: 'test' }], {}, () => h(ModalBtn, { href, color: 'primary' }, () => 'Open'))
+function mountButton(href: string, props: Record<string, unknown> = {}, slots: { default?: () => string } = { default: () => 'Open' }) {
+    mountModals([{ name: 'test' }], {}, () => h(ModalBtn, { href, color: 'primary', ...props }, slots))
 
     return document.querySelector<HTMLAnchorElement>('a.v-btn')!
 }
@@ -21,6 +21,14 @@ describe('ModalBtn', () => {
 
         await userEvent.click(button)
         await vi.waitFor(() => expect(stack.value.at(-1)?.isOpen).toBe(true))
+    })
+
+    it('renders the text prop when there is no slot', () => {
+        expect(mountButton('#test', { text: 'Label' }, {}).textContent).toBe('Label')
+    })
+
+    it('renders the icon prop when there is no slot', () => {
+        expect(mountButton('#test', { icon: '$plus' }, {}).querySelector('.v-icon')).toBeTruthy()
     })
 
     it('leaves modified clicks to the browser', async () => {
